@@ -25,6 +25,8 @@ function loadFiles(){
 }
 function setMap(data){
     var map = L.map('map',{
+        zoomControl: false,
+        scrollWheelZoom: false,
         maxZoom: 18,
     }).setView([44.7, -88.5], 7);
     
@@ -155,6 +157,16 @@ function setMap(data){
                     stopAnimation()
                     countAnimate()
                     stop == true;
+                });
+
+                $("#stop").click(function() {
+                    stopAnimation()
+                    stop == true;
+                });
+
+                $("#play").click(function() {
+                    countAnimate()
+                    stop == false;
                 });
 
                 function animate(){
