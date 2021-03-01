@@ -95,7 +95,7 @@ function setMap(data){
                         weight: 2,
                         opacity: 1,
                         color: 'white',
-                        fillOpacity: 0.7
+                        fillOpacity: 1
                     };
                 }
 
@@ -105,13 +105,16 @@ function setMap(data){
                         weight: 2,
                         opacity: 1,
                         color: 'white',
-                        fillOpacity: 0.7
+                        fillOpacity: 1
                     };
                 }
 
                 var i = 0;
+                var j = 0;
                 var animation;
                 var stop = false;
+                var variable = "severity";
+                var layerInUse = "";
                 
 ////////////////INTERACTIVE HEXBINS///////////////////////
                 // coordArray = [];
@@ -144,47 +147,73 @@ function setMap(data){
                 // hexLayer.data(coordArray);
 
 /////////////// BEGIN ANIMATION////////////////
-
-                countAnimate();
+                // Add initial hexbin map
+                var initMap = L.geoJson(layers[i], {style: {
+                    fillColor: '#FFEDA0',
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 1}
+                }).addTo(map);
 
                 $("#sev").click(function(){
                     stopAnimation();
-                    animate();
-                    stop == true;
+                    sevAnimate();
+                    // stop == true;
                 });
 
                 $("#count").click(function() {
                     stopAnimation()
                     countAnimate()
-                    stop == true;
+                    // stop == true;
                 });
 
                 $("#stop").click(function() {
-                    stopAnimation()
                     stop == true;
+                    console.log(stop);
                 });
 
                 $("#play").click(function() {
-                    countAnimate()
-                    stop == false;
+                    stopAnimation()
+                    if (variable == "severity"){
+                        sevAnimate();
+                    }
+                    else{
+                        countAnimate();
+                    }
                 });
 
-                function animate(){
-                    console.log(stop)
+                function sevAnimate(){
+                    if (map.hasLayer(initMap)){
+                        map.removeLayer(initMap);
+                    }
+                    variable = "severity";
                     if (stop == true){
                         return;
                     }
                     animation = setTimeout(function(){
-                        console.log(i)
-                        L.geoJson(layers[i], {style: sevStyle}).addTo(map);
+                        if (map.hasLayer(layerInUse)){
+                            map.removeLayer(layerInUse);
+                        }
+                        layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
                         $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
                         i++;
-                        if (i <= (layers.length - 1)){
-                            animate()
+                        j++;
+                        if (j <= (3 * (layers.length))){
+                            if (i <= (layers.length - 1)){
+                                sevAnimate();
+                            }
+                            else{
+                                i = 0;
+                                sevAnimate();
+                            }
                         }
                         else{
-                            i = 0;
-                            animate();
+                            stop == true;
+                            map.removeLayer(layerInUse);
+                            initMap.addTo(map);
+                            $("#date-label").html("");
+                            return;
                         }
                     }, 1000)
                 }
@@ -192,6 +221,7 @@ function setMap(data){
                 function stopAnimation(){
                     clearTimeout(animation)
                     i = 0;
+                    j = 0;
                     map.eachLayer(function (layer) {
                         if (layer == basemap){
                             console.log(basemap);
@@ -201,22 +231,41 @@ function setMap(data){
                         }
                     });
                     stop == false;
+                    initMap.addTo(map);
+                    $("#date-label").html("");
                 }
 
                 function countAnimate(){
+                    if (map.hasLayer(initMap)){
+                        map.removeLayer(initMap);
+                    }
+                    variable = "count";
                     if (stop == true){
                         return;
                     }
                     animation = setTimeout(function(){
-                        L.geoJson(layers[i], {style: countStyle}).addTo(map);
+                        if (map.hasLayer(layerInUse)){
+                            map.removeLayer(layerInUse);
+                        }
+                        layerInUse = L.geoJson(layers[i], {style: countStyle}).addTo(map);
                         $("#date-label").html("Number of Tornadoes by Decade: " + labels[i]  + "s");
                         i++;
-                        if (i <= (layers.length - 1)){
-                            countAnimate()
+                        j++;
+                        if (j <= (3 * (layers.length))){
+                            if (i <= (layers.length - 1)){
+                                countAnimate()
+                            }
+                            else{
+                                i = 0;
+                                countAnimate();
+                            }
                         }
                         else{
-                            i = 0;
-                            countAnimate();
+                            stop == true;
+                            map.removeLayer(layerInUse);
+                            initMap.addTo(map);
+                            $("#date-label").html("");
+                            return;
                         }
                     }, 1000)
                 }

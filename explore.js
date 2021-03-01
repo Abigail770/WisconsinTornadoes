@@ -70,7 +70,7 @@ function getStyle(feature) {
 }
 
 var promises = [];
-var files = ["wi_tornadoes.json"];
+var files = ["wi_tornadoes.json", "tornadoes_by_county.geojson"];
 
 
 window.onload = loadFiles()
@@ -106,8 +106,9 @@ function setMap(data){
     Promise.all(promises).then(ready);
     function ready(data){
 
-                var paths = data
-                console.log(paths)
+                var paths = data[0];
+                var counties = data[1];
+
                 L.geoJson(paths, {style: getStyle}).addTo(map);
 
                 // Add invisible layer with buffer to make popups more user friendly
@@ -115,8 +116,21 @@ function setMap(data){
                   onEachFeature: function (feature, layer) {
                     layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
                   },
-                  style: {opacity: 0, weight: 12}
+                  style: {opacity: 0, weight: 10}
                 }).addTo(map);
+
+                var countyLayer = L.geoJson(counties, {
+                  onEachFeature: function (feature, layer) {
+                    layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
+                  },
+                  style: {
+                    fillColor: 'blue',
+                    opacity: 0.7,
+                    color: 'black',
+                    fillOpacity: 0.3}
+                }).addTo(map);
+                countyLayer.bringToBack();
+                
 
     }
 }

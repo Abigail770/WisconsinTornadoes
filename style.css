@@ -77,9 +77,18 @@ a#count.btn.btn-primary:hover {
     background-color: rgb(87, 56, 36);
 }
 
-/* .disabled {
-    display: none;
-} */
+.btn-primary:not(:disabled):not(.disabled).active, 
+.btn-primary:not(:disabled):not(.disabled):active, 
+.show>.btn-primary.dropdown-toggle {
+    background-color:#C65C45;
+    border-color: #fff;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, 
+.btn-primary:not(:disabled):not(.disabled):active, 
+.show>.btn-primary.dropdown-toggle:focus{
+    box-shadow: inset 0px 0px 10px 0px #0b141c;
+}
 
 #sidebar{
     width: 20%;
