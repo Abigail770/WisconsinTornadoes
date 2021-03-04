@@ -106,31 +106,78 @@ function setMap(data){
     Promise.all(promises).then(ready);
     function ready(data){
 
-                var paths = data[0];
-                var counties = data[1];
+      var paths = data[0];
+      var counties = data[1];
+      console.log(counties)
 
-                L.geoJson(paths, {style: getStyle}).addTo(map);
+      var tornadoPaths = L.geoJson(paths, {style: getStyle});
 
-                // Add invisible layer with buffer to make popups more user friendly
-                L.geoJson(paths, {
-                  onEachFeature: function (feature, layer) {
-                    layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
-                  },
-                  style: {opacity: 0, weight: 10}
-                }).addTo(map);
+      // Invisible layer with buffer to make popups more user friendly
+      var invisPaths = L.geoJson(paths, {
+        onEachFeature: function (feature, layer) {
+          layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
+        },
+        style: {opacity: 0, weight: 10}
+      });
 
-                var countyLayer = L.geoJson(counties, {
-                  onEachFeature: function (feature, layer) {
-                    layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
-                  },
-                  style: {
-                    fillColor: 'blue',
-                    opacity: 0.7,
-                    color: 'black',
-                    fillOpacity: 0.3}
-                }).addTo(map);
-                countyLayer.bringToBack();
-                
+      var countyLayer = L.geoJson(counties, {
+        onEachFeature: function (feature, layer) {
+          $(layer).click(function(){
+            $('#name').html("");
+            $('#name').append(feature.properties.COUNTY_NAM);
+
+            $('#num_tornadoes').html("");
+            $('#num_tornadoes').append(feature.properties.Join_Count);
+
+            $('#fat').html("");
+            $('#fat').append(feature.properties.fat);
+
+            $('#inj').html("");
+            $('#inj').append(feature.properties.inj);
+          })
+        },
+        style: {
+          fillColor: 'blue',
+          opacity: 0.7,
+          color: 'black',
+          fillOpacity: 0.3}
+      })
+
+      loadPaths();
+      loadCounties();
+
+      $('.tornado_paths_check').change(function(){
+        loadPaths();
+      });
+      $('.county_bounds_check').change(function(){
+        loadCounties();
+      });
+
+      function loadPaths(){
+        if ($('#tornado_paths_check').prop('checked')){
+          tornadoPaths.addTo(map);
+
+          // Add invisible layer with buffer to make popups more user friendly
+          invisPaths.addTo(map);
+        }else{
+          if (map.hasLayer(invisPaths)){
+            map.removeLayer(tornadoPaths);
+            map.removeLayer(invisPaths);
+          }
+        }
+      }
+
+      function loadCounties(){
+        if ($('#county_bounds_check').prop('checked')){
+          countyLayer.addTo(map);
+          countyLayer.bringToBack();
+        }
+        else{
+          if (map.hasLayer(countyLayer)){
+            map.removeLayer(countyLayer);
+          }
+        }
+      }
 
     }
 }

@@ -51,20 +51,33 @@
         Enter Visualization Mode
       </a>
     </div>
-    <div id="county-info">County info</div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-      <label class="form-check-label" for="flexCheckChecked">
+      <input type="checkbox" value="" class="tornado_paths_check" id="tornado_paths_check" checked="checked">
+      <label class="form-check-label" for="tornado_paths_check">
         Tornado Paths
       </label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-      <label class="form-check-label" for="flexCheckDefault">
+      <input type="checkbox" value="" class="county_bounds_check" id="county_bounds_check" checked="checked">
+      <label class="form-check-label" for="county_bounds_check">
         County Boundaries
       </label>
     </div>
-  </div>
+    <div id="county-info">
+      <div id="county-name">County Name: 
+        <div id="name"></div>
+      </div>
+      <div id="county-count">Number of tornadoes: 
+        <div id="num_tornadoes"></div>
+      </div>
+      <div id="county-fat">Total Fatalities: 
+        <div id="fat"></div>
+      </div>
+      <div id="county-inj">Total Injuries: 
+        <div id="inj"></div>
+      </div>
+    </div>
+    </div>
 
   <div id="lowerbar">
     <div id="state-graph">State graph</div>
