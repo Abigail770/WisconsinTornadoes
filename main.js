@@ -113,6 +113,7 @@ function setMap(data){
                 var j = 0;
                 var animation;
                 var stop = false;
+                var stopClicked = false;
                 var variable = "severity";
                 var layerInUse = "";
                 
@@ -169,12 +170,16 @@ function setMap(data){
                 });
 
                 $("#stop").click(function() {
-                    stop == true;
-                    console.log(stop);
+                    stop = true;
+                    stopClicked = true;
                 });
 
                 $("#play").click(function() {
-                    stopAnimation()
+                    if (stopClicked == true){
+                        stop = false;
+                    }else{
+                        stopAnimation();
+                    }
                     if (variable == "severity"){
                         sevAnimate();
                     }
@@ -189,7 +194,12 @@ function setMap(data){
                     }
                     variable = "severity";
                     if (stop == true){
-                        return;
+                        if (stopClicked == true){
+                            pauseAnimation();
+                            return;
+                        }else{
+                            return;
+                        }
                     }
                     animation = setTimeout(function(){
                         if (map.hasLayer(layerInUse)){
@@ -209,7 +219,7 @@ function setMap(data){
                             }
                         }
                         else{
-                            stop == true;
+                            stop = true;
                             map.removeLayer(layerInUse);
                             initMap.addTo(map);
                             $("#date-label").html("");
@@ -230,9 +240,13 @@ function setMap(data){
                             map.removeLayer(layer);
                         }
                     });
-                    stop == false;
+                    stop = false;
                     initMap.addTo(map);
                     $("#date-label").html("");
+                }
+
+                function pauseAnimation(){
+                    clearTimeout(animation);
                 }
 
                 function countAnimate(){
@@ -241,7 +255,12 @@ function setMap(data){
                     }
                     variable = "count";
                     if (stop == true){
-                        return;
+                        if (stopClicked == true){
+                            pauseAnimation();
+                            return;
+                        }else{
+                            return;
+                        }
                     }
                     animation = setTimeout(function(){
                         if (map.hasLayer(layerInUse)){
@@ -261,7 +280,7 @@ function setMap(data){
                             }
                         }
                         else{
-                            stop == true;
+                            stop = true;
                             map.removeLayer(layerInUse);
                             initMap.addTo(map);
                             $("#date-label").html("");
