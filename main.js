@@ -116,6 +116,7 @@ function setMap(data){
                 var stopClicked = false;
                 var variable = "severity";
                 var layerInUse = "";
+                var legend = "";
                 
 ////////////////INTERACTIVE HEXBINS///////////////////////
                 // coordArray = [];
@@ -160,18 +161,34 @@ function setMap(data){
                 $("#sev").click(function(){
                     stopAnimation();
                     sevAnimate();
+                    addLegend("severity");
                     // stop == true;
                 });
 
                 $("#count").click(function() {
                     stopAnimation()
                     countAnimate()
+                    addLegend("count");
                     // stop == true;
                 });
 
                 $("#stop").click(function() {
                     stop = true;
                     stopClicked = true;
+                });
+
+                $("#back").click(function() {
+                    stop = true;
+                    stopClicked = true;
+                    i -= 2;
+                    j -= 2;
+                    if (variable == "severity"){
+                        layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
+                    }
+                    else{
+                        layerInUse = L.geoJson(layers[i], {style: countStyle}).addTo(map);
+                    }
+
                 });
 
                 $("#play").click(function() {
@@ -187,6 +204,42 @@ function setMap(data){
                         countAnimate();
                     }
                 });
+                
+                function addLegend(type){
+                    if (legend != ""){
+                        legend.remove();
+                    }
+                    legend = L.control({position: 'bottomleft'});
+
+                    legend.onAdd = function (map) {
+
+                        var div = L.DomUtil.create('div', 'info legend')
+                        var grades = [];
+                            if (type == "severity"){
+                                console.log(type);
+                                grades = [0, 1, 2, 3, 4, 5];
+                                // generate a label with a colored square for each interval
+                                for (var i = 0; i < grades.length - 1; i++) {
+                                    div.innerHTML +=
+                                        '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+                                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : 'No data');
+                                }
+                            }else{
+                                grades = [0, 1, 2, 3, 4, 5, 6, 7];
+                                // generate a label with a colored square for each interval
+                                for (var i = 0; i < grades.length - 1; i++) {
+                                    div.innerHTML +=
+                                        '<i style="background:' + getCountColor(grades[i]) + '"></i> ' +
+                                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : 'No data');
+                                }
+                            }
+                        // var labels = [];
+
+                        return div;
+                    };
+
+                    legend.addTo(map);
+                }
 
                 function sevAnimate(){
                     if (map.hasLayer(initMap)){
@@ -209,7 +262,7 @@ function setMap(data){
                         $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
                         i++;
                         j++;
-                        if (j <= (3 * (layers.length))){
+                        if (j <= (layers.length)){
                             if (i <= (layers.length - 1)){
                                 sevAnimate();
                             }
@@ -270,7 +323,7 @@ function setMap(data){
                         $("#date-label").html("Number of Tornadoes by Decade: " + labels[i]  + "s");
                         i++;
                         j++;
-                        if (j <= (3 * (layers.length))){
+                        if (j <= (layers.length)){
                             if (i <= (layers.length - 1)){
                                 countAnimate()
                             }
