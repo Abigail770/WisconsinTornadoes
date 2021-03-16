@@ -178,29 +178,40 @@ function setMap(data){
                 });
 
                 $("#back").click(function() {
+                    pauseAnimation();
                     stop = true;
                     stopClicked = true;
-                    i -= 2;
-                    j -= 2;
-                    if (variable == "severity"){
-                        layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
+                    i -= 1;
+                    j -= 1;
+                    if (!(i < 0) && !(j < 0)){
+                        if (variable == "severity"){
+                            console.log("187" + i)
+                            layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
+                            $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
+                        }
+                        else{
+                            layerInUse = L.geoJson(layers[i], {style: countStyle}).addTo(map);
+                            $("#date-label").html("Number of Tornadoes by Decade: " + labels[i]  + "s");
+                        }
+                    }else{
+                        i = 0;
+                        j = 0;
                     }
-                    else{
-                        layerInUse = L.geoJson(layers[i], {style: countStyle}).addTo(map);
-                    }
-
                 });
 
                 $("#play").click(function() {
+                    console.log(stop)
                     if (stopClicked == true){
                         stop = false;
                     }else{
                         stopAnimation();
                     }
                     if (variable == "severity"){
+                        console.log("sev")
                         sevAnimate();
                     }
                     else{
+                        console.log("count")
                         countAnimate();
                     }
                 });
@@ -260,8 +271,10 @@ function setMap(data){
                         }
                         layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
                         $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
+                        console.log("271" + i)
                         i++;
                         j++;
+                        console.log("274" + i)
                         if (j <= (layers.length)){
                             if (i <= (layers.length - 1)){
                                 sevAnimate();
@@ -272,13 +285,15 @@ function setMap(data){
                             }
                         }
                         else{
+                            j=0;
+                            i=0;
                             stop = true;
                             map.removeLayer(layerInUse);
                             initMap.addTo(map);
                             $("#date-label").html("");
                             return;
                         }
-                    }, 1000)
+                    }, 700)
                 }
 
                 function stopAnimation(){
@@ -333,6 +348,8 @@ function setMap(data){
                             }
                         }
                         else{
+                            j=0;
+                            i=0;
                             stop = true;
                             map.removeLayer(layerInUse);
                             initMap.addTo(map);

@@ -33,35 +33,35 @@ body{
 
 .btn-group{
     position: absolute;
-    top: 10%;
-    left: 80%;
+    bottom: 20%;
 }
 
 #mode{
     position: absolute;
-    bottom: 15%;
-    padding: 10px;
-}
-
-#play{
-    position: absolute;
     bottom: 10%;
     padding: 10px;
-    right: 10%;
+    display: block;
 }
 
 #stop{
     position: absolute;
-    bottom: 10%;
+    bottom: 30%;
     padding: 10px;
-    right: 5%;
+    left: 45%;
+}
+
+#play{
+    position: absolute;
+    bottom: 30%;
+    padding: 10px;
+    left: 70%;
 }
 
 #back{
     position: absolute;
-    bottom: 10%;
+    bottom: 30%;
     padding: 10px;
-    right: 15%;
+   left: 20%;
 }
 
 button.btn.btn-primary{

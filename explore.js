@@ -33,6 +33,7 @@ function loadFiles(){
         }
     });
 }
+
 function setMap(data){
     var map = L.map('map',{
       maxZoom: 18,
@@ -61,11 +62,13 @@ function setMap(data){
       var hex1990 = data[6];
       var hex2000 = data[7];
       var hex2010 = data[8];
-      console.log(paths);
       var decades = [hex1950, hex1960, hex1970, hex1980, hex1990, hex2000, hex2010];
+
+      setStateChart(paths);
 
       var countyStyle = {
         fillColor: 'blue',
+        weight: 2,
         opacity: 0.7,
         color: 'black',
         fillOpacity: 0.3};
@@ -85,6 +88,7 @@ function setMap(data){
         onEachFeature: function (feature, layer) {
           $(layer).click(function(){
             countyLayer.setStyle(countyStyle);
+            countyLayer.bringToBack();
             highlightFeature(layer);
             $('#name').html("");
             $('#name').append(feature.properties.COUNTY_NAM);
@@ -97,6 +101,8 @@ function setMap(data){
 
             $('#inj').html("");
             $('#inj').append(feature.properties.inj);
+            // var intersect = spatialJoin(feature.geometry);
+            // console.log(intersect);
             var yearList = getTornadoData(feature.properties.COUNTY_NAM, feature.geometry);
             setCountyChart(feature.properties.COUNTY_NAM, yearList);
           })
@@ -139,7 +145,16 @@ function setMap(data){
           }
         }
       }
+
+      // function spatialJoin(countyGeom){
+      //   var joined = paths.features.filter(function (feature) {
+      //     return turf.booleanIntersects(feature, countyGeom);
+      //   });
+      //   return joined;
+      // }
+
       function getTornadoData(countyName, countyGeom){
+      
         var years = [];
         for (var i = 0; i < paths.features.length; i++){
           var line = paths.features[i].geometry;
@@ -179,12 +194,12 @@ function setMap(data){
         years.forEach(function(num) { 
           counts[num] = (counts[num] || 0) + 1; 
         });
-        console.log(counts)
         return counts;
       }
 
     }
 }
+
 
 function highlightFeature(feature){
   feature.setStyle({
@@ -205,7 +220,7 @@ function setCountyChart(countyName, yearList){
   width = 300 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
-  finalList = [];
+  var finalList = [];
 
   for (var [key, value] of Object.entries(yearList)) {
     finalList.push({"decade": key, "count": value})
@@ -217,7 +232,7 @@ function setCountyChart(countyName, yearList){
   });
 
   var maxCount = d3.max(finalList, function(d) { return d.count; })
-  console.log(maxCount);
+
   // set the ranges
   var x = d3.scaleBand()
         .range([0, width])
@@ -260,21 +275,65 @@ function setCountyChart(countyName, yearList){
 }
 
 //function to create coordinated bar chart
-function setStateChart(decades){
+function setStateChart(paths){
 
-    // set the dimensions and margins of the graph
+  var decade1 = 0;
+  var decade2 = 0;
+  var decade3 = 0;
+  var decade4 = 0;
+  var decade5 = 0;
+  var decade6 = 0;
+  var decade7 = 0;
+
+  turf.propEach(paths, function (currentProperties, featureIndex) {
+    var year = currentProperties.yr.toString();
+    console.log(year[1])
+    if (year[1] == "9"){
+      if (year[2] == "5"){
+        decade1 ++
+      }
+      if (year[2] == "6"){
+        decade2++
+      }
+      if (year[2] == "7"){
+        decade3++;
+      }
+      if (year[2] == "8"){
+        decade4++;
+      }
+      if (year[2] == "9"){
+        decade5++;
+      }
+    }
+    else {
+      if (year[2] == "0"){
+        decade6++;
+      }
+      if (year[2] == "1"){
+        decade7++;
+      }
+    }
+  });
+
+  var decadeList = [{"decade": 1950, "count": decade1}, {"decade": 1960, "count": decade2}, {"decade": 1970, "count": decade3}, {"decade": 1980, "count": decade4}, {"decade": 1990, "count": decade5}, {"decade": 2000, "count": decade6}, {"decade": 2010, "count": decade7}];
+
+  var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
+
+  // set the dimensions and margins of the graph
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
   width = 300 - margin.left - margin.right,
-  height = 150 - margin.top - margin.bottom;
+  height = 250 - margin.top - margin.bottom;
+
+  var maxCount = d3.max(decadeList, function(d) { return d.count; })
 
   // set the ranges
   var x = d3.scaleBand()
         .range([0, width])
-        .domain([0, 100])
+        .domain(decades.map(function(d) { return d; }))
         .padding(0.1);
   var y = d3.scaleLinear()
         .range([height, 0])
-        .domain([0, 100]);
+        .domain([0, maxCount]);
 
   /////////////Create D3 State graph/////////////////
         
@@ -288,6 +347,16 @@ function setStateChart(decades){
   .attr("transform", 
         "translate(" + margin.left + "," + margin.top + ")");
 
+  // append the rectangles for the bar chart
+  svg.selectAll(".bar")
+  .data(decadeList)
+  .enter().append("rect")
+  .attr("class", "bar")
+  .attr("x", function(d) { return x(d.decade); })
+  .attr("width", x.bandwidth())
+  .attr("y", function(d) { return y(d.count); })
+  .attr("height", function(d) { return height - y(d.count); });
+
   // add the x Axis
   svg.append("g")
   .attr("transform", "translate(0," + height + ")")
@@ -295,75 +364,7 @@ function setStateChart(decades){
 
   // add the y Axis
   svg.append("g")
-  .call(d3.axisLeft(y));
-  // //chart frame dimensions
-  // var chartWidth = window.innerWidth * 0.425,
-  //     chartHeight = 473,
-  //     leftPadding = 25,
-  //     rightPadding = 2,
-  //     topBottomPadding = 5,
-  //     chartInnerWidth = chartWidth - leftPadding - rightPadding,
-  //     chartInnerHeight = chartHeight - topBottomPadding * 2,
-  //     translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
-
-  // //create a second svg element to hold the bar chart
-  // var chart = d3.select("body")
-  //     .append("svg")
-  //     .attr("width", chartWidth)
-  //     .attr("height", chartHeight)
-  //     .attr("class", "chart");
-
-  //create a rectangle for chart background fill
-  // var chartBackground = chart.append("rect")
-  //     .attr("class", "chartBackground")
-  //     .attr("width", chartInnerWidth)
-  //     .attr("height", chartInnerHeight)
-  //     .attr("transform", translate);
-
-  // //create a scale to size bars proportionally to frame and for axis
-  // var yScale = d3.scaleLinear()
-  //     .range([463, 0])
-  //     .domain([0, 100]);
-  //set bars for each decade
-  var bars = svg.selectAll(".bar")
-      .data(data)
-      .enter()
-      .append("rect")
-      // .sort(function(a, b){
-      //     return b[expressed]-a[expressed]
-      // })
-      .attr("class", function(d){
-          return "bar " + d.adm1_code;
-      })
-      .attr("width", chartInnerWidth / counties.length - 1)
-  
-  // var desc = bars.append("desc")
-  //     .text('{"stroke": "none", "stroke-width": "0px"}');
-
-  // //create a text element for the chart title
-  // var chartTitle = chart.append("text")
-  //     .attr("x", 40)
-  //     .attr("y", 40)
-  //     .attr("class", "chartTitle")
-  //     .text(expressed);
-
-  // //create vertical axis generator
-  // var yAxis = d3.axisLeft(yScale)
-  //     .scale(yScale);
-
-  // //place axis
-  // var axis = chart.append("g")
-  //     .attr("class", "axis")
-  //     .attr("transform", translate)
-  //     .call(yAxis);
-
-  // //create frame for chart border
-  // var chartFrame = chart.append("rect")
-  //     .attr("class", "chartFrame")
-  //     .attr("width", chartInnerWidth)
-  //     .attr("height", chartInnerHeight)
-  //     .attr("transform", translate);
-  
-  // //set bar positions, heights, and colors
-  // updateChart(bars, csvData.length, colorScale);
+  .call(d3.axisLeft(y))
+  // .ticks(maxCount)
+  // .tickFormat(d3.format("d")));
 };

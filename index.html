@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" />
 
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"> 
+
     <link rel="stylesheet" href="style.css"/>
   </head>
   <body>
@@ -45,27 +48,25 @@
   <div id="map"></div>
   <div id="date-label"></div>
 
-  <div class="btn-group">
-    <button id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-      Tornado Count
-    </button>
-    <button id="sev" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-      Tornado Severity
-    </button>
-  </div>
-
-  <button id="play" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-    Play
-  </button>
-  <button id="stop" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-    Stop
-  </button>
-  <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-    Back
-  </button>
-
   <div id="sidebar">
     <div id="info-text">Tornadoes are among the least understood storm events in terms of climate change impacts.  Over the past few decades, there has been no identifiable increase the number of high magnitude tornadoes in the US.  However, tornado events are increasinly clustered and the number of days with tornado events is increasing.  This could be an effect of climate change. </br></br> <strong>Click "play" or select a variable to start the animation.</strong></div>
+    <button id="play" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      <i class="fas fa-play"></i>
+    </button>
+    <button id="stop" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      <i class="fas fa-pause"></i>
+    </button>
+    <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      <i class="fas fa-backward"></i>
+    </button>
+    <div class="btn-group">
+      <button id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+        Tornado Count
+      </button>
+      <button id="sev" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+        Tornado Severity
+      </button>
+    </div>
     <div id="mode">
       <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="explore.html">
         Enter Exploration Mode
