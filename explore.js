@@ -217,7 +217,7 @@ function setCountyChart(countyName, yearList){
   var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
   // set the dimensions and margins of the graph
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
-  width = 300 - margin.left - margin.right,
+  width = 280 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
   var finalList = [];
@@ -321,7 +321,7 @@ function setStateChart(paths){
 
   // set the dimensions and margins of the graph
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
-  width = 300 - margin.left - margin.right,
+  width = 280 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
   var maxCount = d3.max(decadeList, function(d) { return d.count; })

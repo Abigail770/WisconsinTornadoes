@@ -1,5 +1,6 @@
 body{
     overflow: hidden;
+    border-bottom: black 10px solid;
 }
 
 #map{
@@ -8,27 +9,34 @@ body{
     right: 0px;
     top: 0px;
     bottom: 0px;
-
-    border: lightgray;
+    border-bottom: black 10px solid;
+    /* border-right: white 0.5px solid;
+    border-left: white 0.5px solid;
+    border-top: white 0.5px solid; */
     z-index: -1;
 }
 
 .bg-orange {
-    background-color: #C65C45;
+    background-color:#484848;
     color: white;
-    box-shadow: inset 0px 0px 10px 0px #0b141c;
+    box-shadow: inset 0px 0px 2px 0px white;
+    border-bottom: black 10px solid;
+    border-right: black 10px solid;
+    border-left: black 10px solid;
+    border-top: black 5px solid;
 }
 
 #date-label{
     position: absolute;
     height: 100px;
     width: 50%;
-    left: 25%;
+    left: 50%;
     top: 10px;
     z-index: 999;
     right: 50%;
     color: white;
-    font-size: 30px;
+    font-size: 25px;
+    font-weight: bold;
 }
 
 .btn-group{
@@ -104,13 +112,17 @@ a#count.btn.btn-primary:hover {
     right: 80%;
     top: 0px;
     bottom: 0px;
-    background-color:#181818;
-    box-shadow: inset 0px 0px 10px 0px #282828;
+    background-color:#484848;
+    box-shadow: inset 0px 0px 2px 0px white;
     color: white;
+    border-bottom: black 10px solid;
+    border-right:black 10px solid;
+    border-left:black 10px solid;
 }
 
 #info-text{
     padding: 10px;
+    border-bottom: black 10px solid;
 }
 
 #county-info{
@@ -125,9 +137,12 @@ a#count.btn.btn-primary:hover {
     right: 0px;
     bottom: 0px;
     top: 0px;
-    background-color:#181818;
-    box-shadow: inset 0px 0px 10px 0px #282828;
+    background-color:#484848;
+    box-shadow: inset 0px 0px 2px 0px white;
     color: white;
+    border-bottom: black 10px solid;
+    border-right:black 10px solid;
+    border-left:black 10px solid;
 }
 
 #county-graph{
@@ -135,7 +150,7 @@ a#count.btn.btn-primary:hover {
     width: 100%;
     position: absolute;
     padding: 10px;
-    border-bottom: 1px solid #C65C45;
+    border-bottom: black 10px solid;
 }
 
 #state-graph{
@@ -157,4 +172,9 @@ a#count.btn.btn-primary:hover {
     margin-right: 8px;
 }
 
-.bar { fill: steelblue; }
+.bar { fill: #FD8D3C; }
+
+#toggles{
+    border-bottom: black 10px solid;
+    padding: 10px;
+}

@@ -8,7 +8,6 @@
 var promises = [];
 var files = ["1950_hex.geojson", "1960_hex.geojson", "1970_hex.geojson", "1980_hex.geojson", "1990_hex.geojson", "2000_hex.geojson", "2010_hex.geojson"];
 
-
 window.onload = loadFiles()
 window.onload = setMap()
 
@@ -28,14 +27,17 @@ function setMap(data){
         zoomControl: false,
         scrollWheelZoom: false,
         maxZoom: 18,
+        dragging: false,
     }).setView([44.7, -88.5], 7);
     
     // Set map top == navbar height so the navbar will not hide the top of it
     $('#map').css('top', $('#navbar').outerHeight());
     $('#map').css('left', "20%");
+    $('#map').css('border-right', 'black 10px solid');
     $('#sidebar').css('top', $('#navbar').outerHeight());
     // $('.btn-group').css('top', $('#navbar').outerHeight());
     $('#date-label').css('top', $('#navbar').outerHeight());
+    $('#date-label').css('left', $('#sidebar').width() + 20 + ($('#map').width() * 0.3));
     
     var basemap = L.esri.basemapLayer('DarkGray').addTo(map);
     
@@ -95,7 +97,8 @@ function setMap(data){
                         weight: 2,
                         opacity: 1,
                         color: 'white',
-                        fillOpacity: 1
+                        fillOpacity: 1,
+                        interactive: false
                     };
                 }
 
@@ -105,7 +108,8 @@ function setMap(data){
                         weight: 2,
                         opacity: 1,
                         color: 'white',
-                        fillOpacity: 1
+                        fillOpacity: 1,
+                        interactive: false
                     };
                 }
 
@@ -117,45 +121,16 @@ function setMap(data){
                 var variable = "severity";
                 var layerInUse = "";
                 var legend = "";
-                
-////////////////INTERACTIVE HEXBINS///////////////////////
-                // coordArray = [];
-
-                // hex1950.features.forEach(function(feature){
-                //     coordinates = feature.geometry.coordinates
-                //     coordinates.forEach(function(coord){
-                //         coord.forEach(function(element){
-                //             coordArray.push(element)
-                //         })
-                //     })
-                // })
-
-                // function getDomain(){
-                //     domainArray = [];
-                //     hex1950.features.forEach(function(feature){
-                //         domainArray.push(feature.properties["Join_Count"])
-                //     })
-                //     console.log(domainArray)
-                //     return domainArray
-                // }
-
-                // var options = {}
-                // // Create the hexbin layer and set all of the accessor functions
-                // var hexLayer = L.hexbinLayer(options).addTo(map);
-
-                // var colorScale = d3.scaleLinear().range(['#800026','#BD0026','#E31A1C','#FC4E2A','#FD8D3C','#FEB24C','#FFEDA0']).domain([0,4]);
-                // hexLayer.colorScale(colorScale);
-                
-                // hexLayer.data(coordArray);
 
 /////////////// BEGIN ANIMATION////////////////
                 // Add initial hexbin map
                 var initMap = L.geoJson(layers[i], {style: {
-                    fillColor: '#FFEDA0',
+                    fillColor: '#484848',
                     weight: 2,
                     opacity: 1,
                     color: 'white',
-                    fillOpacity: 1}
+                    fillOpacity: 1,
+                    interactive: false}
                 }).addTo(map);
 
                 $("#sev").click(function(){
@@ -271,6 +246,7 @@ function setMap(data){
                         }
                         layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
                         $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
+                        console.log($("#date-label").html())
                         console.log("271" + i)
                         i++;
                         j++;
@@ -356,7 +332,7 @@ function setMap(data){
                             $("#date-label").html("");
                             return;
                         }
-                    }, 1000)
+                    }, 500)
                 }
         }
     }
