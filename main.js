@@ -6,7 +6,7 @@
 //     }
 //     })
 var promises = [];
-var files = ["1950_hex.geojson", "1960_hex.geojson", "1970_hex.geojson", "1980_hex.geojson", "1990_hex.geojson", "2000_hex.geojson", "2010_hex.geojson"];
+var files = ["join_1950.json", "join_1960.json", "join_1970.json", "join_1980.json", "join_1990.json", "join_2000.json", "join_2010.json", "january.json", "february.json", "march.json", "april.json", "may.json", "june.json", "july.json", "august.json", "september.json", "october.json", "november.json", "december.json"];
 
 window.onload = loadFiles()
 window.onload = setMap()
@@ -65,17 +65,32 @@ function setMap(data){
                 var hex1990 = data[4]
                 var hex2000 = data[5]
                 var hex2010 = data[6]
+                var january = data[7]
+                var february = data[8]
+                var march = data[9]
+                var april = data[10]
+                var may = data[11]
+                var june = data[12]
+                var july = data[13]
+                var august = data[14]
+                var september = data[15]
+                var october = data[16]
+                var november = data[17]
+                var december = data[18]
 
                 var layers = [hex1950, hex1960, hex1970, hex1980, hex1990, hex2000, hex2010];
-                var labels = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
+                var labels = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"];
+
+                var monthLayers = [january, february, march, april, may, june, july, august, september, october, november, december];
+                var monthLabels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
                 function getColor(d) {
-                    return d == 5 ? '#800026' :
-                        d == 4  ? '#BD0026' :
-                        d == 3  ? '#E31A1C' :
-                        d == 2  ? '#FC4E2A' :
-                        d == 1   ? '#FD8D3C' :
-                        d == 0   ? '#FEB24C' :
+                    return d == 5 ? '#E31A1C' :
+                        d == 4  ? '#FC4E2A' :
+                        d == 3  ? '#FD8D3C' :
+                        d == 2  ? '#FEB24C' :
+                        d == 1   ? '#FED976' :
+                        d == 0   ? '#FFEDA0' :
                                     '#FFEDA0';
                 }
 
@@ -88,7 +103,7 @@ function setMap(data){
                         d == 2   ? '#FEB24C' :
                         d == 1   ? '#FED976' :
                         d == 0   ?  '#FFEDA0':
-                                    '#fffff';
+                                    '#FFEDA0';
                 }
 
                 function sevStyle(feature) {
@@ -121,6 +136,7 @@ function setMap(data){
                 var variable = "severity";
                 var layerInUse = "";
                 var legend = "";
+                var selection = "decade";
 
 /////////////// BEGIN ANIMATION////////////////
                 // Add initial hexbin map
@@ -133,16 +149,44 @@ function setMap(data){
                     interactive: false}
                 }).addTo(map);
 
-                $("#sev").click(function(){
+                $("#decades").click(function(){
                     stopAnimation();
-                    sevAnimate();
+                    stop=true;
+                    stopClicked=true;
+                    selection="decade";
+                });
+
+                $("#months").click(function(){
+                    stopAnimation();
+                    stop=true;
+                    stopClicked=true;
+                    selection="month";
+                });
+
+                $("#sev").click(function(){
+                    if (selection == "decade"){
+                        stopAnimation();
+                        variable = "severity";
+                        // sevAnimate();
+                    }else if (selection == "month"){
+                        stopMonthAnimation();
+                        variable = "severity";
+                        // sevMonthAnimate();
+                    }
                     addLegend("severity");
                     // stop == true;
                 });
 
                 $("#count").click(function() {
-                    stopAnimation()
-                    countAnimate()
+                    if (selection == "decade"){
+                        stopAnimation();
+                        variable = "count";
+                        // countAnimate()
+                    }else if (selection == "month"){
+                        stopMonthAnimation();
+                        variable = "count";
+                        // countMonthAnimate();
+                    }
                     addLegend("count");
                     // stop == true;
                 });
@@ -158,36 +202,66 @@ function setMap(data){
                     stopClicked = true;
                     i -= 1;
                     j -= 1;
-                    if (!(i < 0) && !(j < 0)){
-                        if (variable == "severity"){
-                            console.log("187" + i)
-                            layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
-                            $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
+                    if (selection == "decade"){
+                        if (!(i < 0) && !(j < 0)){
+                            if (variable == "severity"){
+                                layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
+                                $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
+                            }
+                            else{
+                                layerInUse = L.geoJson(layers[i], {style: countStyle}).addTo(map);
+                                $("#date-label").html("Number of Tornadoes by Decade: " + labels[i]  + "s");
+                            }
+                        }else{
+                            i = 0;
+                            j = 0;
                         }
-                        else{
-                            layerInUse = L.geoJson(layers[i], {style: countStyle}).addTo(map);
-                            $("#date-label").html("Number of Tornadoes by Decade: " + labels[i]  + "s");
+                    }else if (selection == "month"){
+                        if (!(i < 0) && !(j < 0)){
+                            if (variable == "severity"){
+                                layerInUse = L.geoJson(monthLayers[i], {style: sevStyle}).addTo(map);
+                                $("#date-label").html("Tornado Severity by Month: " + monthLabels[i]);
+                            }
+                            else{
+                                layerInUse = L.geoJson(monthLayers[i], {style: countStyle}).addTo(map);
+                                $("#date-label").html("Number of Tornadoes by Month: " + monthLabels[i]);
+                            }
+                        }else{
+                            i = 0;
+                            j = 0;
                         }
-                    }else{
-                        i = 0;
-                        j = 0;
                     }
                 });
 
                 $("#play").click(function() {
-                    console.log(stop)
-                    if (stopClicked == true){
-                        stop = false;
-                    }else{
-                        stopAnimation();
-                    }
-                    if (variable == "severity"){
-                        console.log("sev")
-                        sevAnimate();
-                    }
-                    else{
-                        console.log("count")
-                        countAnimate();
+                    if (selection == "decade"){
+                        if (stopClicked == true){
+                            stop = false;
+                        }else{
+                            stopAnimation();
+                        }
+                        if (variable == "severity"){
+                            addLegend("severity");
+                            sevAnimate();
+                        }
+                        else{
+                            addLegend("count");
+                            countAnimate();
+                        }
+                    }else if (selection == "month"){
+                        if (stopClicked == true){
+                            stop = false;
+                        }else{
+                            stopMonthAnimation();
+                        }
+                        if (variable == "severity"){
+                            addLegend("severity");
+                            sevMonthAnimate();
+                        }
+                        else{
+                            addLegend("count");
+                            countMonthAnimate();
+                        }
                     }
                 });
                 
@@ -202,13 +276,12 @@ function setMap(data){
                         var div = L.DomUtil.create('div', 'info legend')
                         var grades = [];
                             if (type == "severity"){
-                                console.log(type);
                                 grades = [0, 1, 2, 3, 4, 5];
                                 // generate a label with a colored square for each interval
-                                for (var i = 0; i < grades.length - 1; i++) {
+                                for (var i = 0; i < grades.length; i++) {
                                     div.innerHTML +=
                                         '<i style="background:' + getColor(grades[i]) + '"></i> ' +
-                                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : 'No data');
+                                        grades[i] + ' EF <br>';
                                 }
                             }else{
                                 grades = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -216,7 +289,7 @@ function setMap(data){
                                 for (var i = 0; i < grades.length - 1; i++) {
                                     div.innerHTML +=
                                         '<i style="background:' + getCountColor(grades[i]) + '"></i> ' +
-                                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : 'No data');
+                                        grades[i] + (grades[i + 1]? '&ndash;' + grades[i + 1] + ' tornadoes per ' + selection + '<br>' : 'No data');
                                 }
                             }
                         // var labels = [];
@@ -264,12 +337,15 @@ function setMap(data){
                             j=0;
                             i=0;
                             stop = true;
+                            if (legend != ""){
+                                legend.remove();
+                            }
                             map.removeLayer(layerInUse);
                             initMap.addTo(map);
                             $("#date-label").html("");
                             return;
                         }
-                    }, 700)
+                    }, 800)
                 }
 
                 function stopAnimation(){
@@ -278,7 +354,7 @@ function setMap(data){
                     j = 0;
                     map.eachLayer(function (layer) {
                         if (layer == basemap){
-                            console.log(basemap);
+                            console.log("stopped animation");
                         }
                         else{
                             map.removeLayer(layer);
@@ -327,12 +403,130 @@ function setMap(data){
                             j=0;
                             i=0;
                             stop = true;
+                            if (legend != ""){
+                                legend.remove();
+                            }
                             map.removeLayer(layerInUse);
                             initMap.addTo(map);
                             $("#date-label").html("");
                             return;
                         }
-                    }, 500)
+                    }, 700)
+                }
+
+                //// MONTH ANIMATION /////////
+
+                function sevMonthAnimate(){
+                    console.log("sevmonthanimate")
+                    if (map.hasLayer(initMap)){
+                        map.removeLayer(initMap);
+                    }
+                    variable = "severity";
+                    if (stop == true){
+                        if (stopClicked == true){
+                            pauseAnimation();
+                            return;
+                        }else{
+                            return;
+                        }
+                    }
+                    animation = setTimeout(function(){
+                        if (map.hasLayer(layerInUse)){
+                            map.removeLayer(layerInUse);
+                        }
+                        layerInUse = L.geoJson(monthLayers[i], {style: sevStyle}).addTo(map);
+                        $("#date-label").html("Tornado Severity by Month: " + monthLabels[i]);
+                        i++;
+                        j++;
+                        if (j <= (monthLayers.length)){
+                            if (i <= (monthLayers.length - 1)){
+                                sevMonthAnimate();
+                            }
+                            else{
+                                i = 0;
+                                sevMonthAnimate();
+                            }
+                        }
+                        else{
+                            j=0;
+                            i=0;
+                            stop = true;
+                            if (legend != ""){
+                                legend.remove();
+                            }
+                            map.removeLayer(layerInUse);
+                            initMap.addTo(map);
+                            $("#date-label").html("");
+                            return;
+                        }
+                    }, 800)
+                }
+
+                function stopMonthAnimation(){
+                    clearTimeout(animation)
+                    i = 0;
+                    j = 0;
+                    map.eachLayer(function (layer) {
+                        if (layer == basemap){
+                            console.log(basemap);
+                        }
+                        else{
+                            map.removeLayer(layer);
+                        }
+                    });
+                    stop = false;
+                    initMap.addTo(map);
+                    $("#date-label").html("");
+                }
+
+                // function pauseMonthAnimation(){
+                //     clearTimeout(animation);
+                // }
+
+                function countMonthAnimate(){
+                    console.log("countmonthanimate")
+                    if (map.hasLayer(initMap)){
+                        map.removeLayer(initMap);
+                    }
+                    variable = "count";
+                    if (stop == true){
+                        if (stopClicked == true){
+                            pauseAnimation();
+                            return;
+                        }else{
+                            return;
+                        }
+                    }
+                    animation = setTimeout(function(){
+                        if (map.hasLayer(layerInUse)){
+                            map.removeLayer(layerInUse);
+                        }
+                        layerInUse = L.geoJson(monthLayers[i], {style: countStyle}).addTo(map);
+                        $("#date-label").html("Number of Tornadoes by Month: " + monthLabels[i]);
+                        i++;
+                        j++;
+                        if (j <= (monthLayers.length)){
+                            if (i <= (monthLayers.length - 1)){
+                                countMonthAnimate()
+                            }
+                            else{
+                                i = 0;
+                                countMonthAnimate();
+                            }
+                        }
+                        else{
+                            j=0;
+                            i=0;
+                            stop = true;
+                            if (legend != ""){
+                                legend.remove();
+                            }
+                            map.removeLayer(layerInUse);
+                            initMap.addTo(map);
+                            $("#date-label").html("");
+                            return;
+                        }
+                    }, 700)
                 }
         }
     }

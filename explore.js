@@ -5,7 +5,7 @@ function getColor(d) {
       d == 2  ? '#FC4E2A' :
       d == 1   ? '#FD8D3C' :
       d == 0   ? '#FEB24C' :
-                  '#FFEDA0';
+                  '#FEB24C';
 }
 
 function getStyle(feature) {
@@ -17,7 +17,7 @@ function getStyle(feature) {
 
 var promises = [];
 var files = ["wi_tornadoes.json", "tornadoes_by_county.geojson", "1950_hex.geojson", "1960_hex.geojson", "1970_hex.geojson", "1980_hex.geojson", "1990_hex.geojson", "2000_hex.geojson", "2010_hex.geojson"];
-
+var legend = "";
 
 window.onload = loadFiles()
 window.onload = setMap()
@@ -37,7 +37,12 @@ function loadFiles(){
 function setMap(data){
     var map = L.map('map',{
       maxZoom: 18,
+      zoomControl: false,
     }).setView([44.5, -86.8], 7);
+
+    // Add Leaflet zoom home control
+    var zoomHome = L.Control.zoomHome();
+    zoomHome.addTo(map);
 
     // Set map top == navbar height so the navbar will not hide the top of it
     $('#map').css('top', $('#navbar').outerHeight());
@@ -67,10 +72,10 @@ function setMap(data){
       setStateChart(paths);
 
       var countyStyle = {
-        fillColor: 'blue',
-        weight: 2,
+        fillColor: '#000080',
+        weight: 1,
         opacity: 0.7,
-        color: 'black',
+        color: 'white',
         fillOpacity: 0.3};
 
       // setStateChart(decades);
@@ -123,10 +128,14 @@ function setMap(data){
       function loadPaths(){
         if ($('#tornado_paths_check').prop('checked')){
           tornadoPaths.addTo(map);
+          addLegend();
 
           // Add invisible layer with buffer to make popups more user friendly
           invisPaths.addTo(map);
         }else{
+          if (legend != ""){
+            legend.remove();
+          }
           if (map.hasLayer(invisPaths)){
             map.removeLayer(tornadoPaths);
             map.removeLayer(invisPaths);
@@ -152,6 +161,28 @@ function setMap(data){
       //   });
       //   return joined;
       // }
+      
+      function addLegend(){
+        legend = L.control({position: 'bottomleft'});
+
+        legend.onAdd = function (map) {
+
+            var div = L.DomUtil.create('div', 'info legend')
+            var grades = [];
+            grades = [0, 1, 2, 3, 4, 5];
+            // generate a label with a colored square for each interval
+            for (var i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+                    grades[i] + ' EF <br>';
+            }
+            // var labels = [];
+
+            return div;
+        };
+
+        legend.addTo(map);
+    }
 
       function getTornadoData(countyName, countyGeom){
       
@@ -203,20 +234,20 @@ function setMap(data){
 
 function highlightFeature(feature){
   feature.setStyle({
-    weight: 5,
-    color: '#666',
+    weight: 6,
+    // color: '#666',
     dashArray: '',
-    fillOpacity: 0.7
+    // fillOpacity: 0.7
   });
   feature.bringToFront();
 }
 
 function setCountyChart(countyName, yearList){
-  $("#county-graph").html("");
+  $("#county-graph").html(countyName);
   /////////////Create D3 County graph/////////////////
   var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var margin = {top: 20, right: 20, bottom: 40, left: 40},
   width = 280 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
@@ -272,6 +303,23 @@ function setCountyChart(countyName, yearList){
   .call(d3.axisLeft(y)
   .ticks(maxCount)
   .tickFormat(d3.format("d")));
+
+  // Add x axis label
+  svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", width/2)
+    .attr("y", height + margin.bottom)
+    .text("Decade");
+
+  // Add y axis label
+  svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", -margin.left)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text("Number of Tornadoes");
 }
 
 //function to create coordinated bar chart
@@ -320,7 +368,7 @@ function setStateChart(paths){
   var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
 
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var margin = {top: 20, right: 20, bottom: 40, left: 45},
   width = 280 - margin.left - margin.right,
   height = 250 - margin.top - margin.bottom;
 
@@ -335,7 +383,6 @@ function setStateChart(paths){
         .range([height, 0])
         .domain([0, maxCount]);
 
-  /////////////Create D3 State graph/////////////////
         
   // append the svg object to the body of the page
   // append a 'group' element to 'svg'
@@ -367,4 +414,21 @@ function setStateChart(paths){
   .call(d3.axisLeft(y))
   // .ticks(maxCount)
   // .tickFormat(d3.format("d")));
+
+  // Add x axis label
+  svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", width/2)
+    .attr("y", height + margin.bottom)
+    .text("Decade");
+
+  // Add y axis label
+  svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", -margin.left)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text("Number of Tornadoes");
 };

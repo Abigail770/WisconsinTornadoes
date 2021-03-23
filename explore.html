@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
     crossorigin=""/>
+    <link rel="stylesheet" href="lib/leaflet.zoomhome.css">
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" /> -->
 
@@ -41,45 +42,68 @@
       </div>
   </nav>
 
+  <!-- About Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title about-title" id="aboutModalLabel">About the Map</h5>
+            </div>
+            <div class="modal-body about-body">
+                <p>This map was created by Abigail Gleason for her independent practicum project class at UW-Madison in the GIS and Web Map Programming Master's degree program.</p>
+                <hr>
+                <h5>Data Sources</h5>
+                <p>Tornado data: <a href='https://www.spc.noaa.gov/gis/svrgis/' target="_blank">NOAA GIS</a></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <!-- Map -->
   <div id="map"></div>
 
   <div id="sidebar">
-    <div id="info-text">This map displays tornado occurences in Wisconsin between 1950 and 2018.</div>
+    <div id="info-text">This map displays tornado occurrences in Wisconsin between 1950 and 2018.</div>
+    <div id="toggles">
+      <label class="container">Tornado Paths
+        <input type="checkbox" checked="checked" id="tornado_paths_check" class="tornado_paths_check">
+        <span class="checkmark"></span>
+      </label>
+      <label class="container">County Boundaries
+        <input type="checkbox" checked="checked" id="county_bounds_check" class="county_bounds_check">
+        <span class="checkmark"></span>
+      </label>
+    </div>
+    <div id="county-info"> 
+      <div id="county-info-text">
+        Select a county on the map to populate the information below.
+      </div>
+      <div id="county-name">
+        <h4>County Name:</h4> 
+        <div id="name"></div>
+      </div>
+      <div id="county-count">
+        <h4>Number of Tornadoes: </h4>
+        <div id="num_tornadoes"></div>
+      </div>
+      <div id="county-fat">
+        <h4>Total Fatalities: </h4>
+        <div id="fat"></div>
+      </div>
+      <div id="county-inj">
+        <h4>Total Injuries: </h4>
+        <div id="inj"></div>
+      </div>
+    </div>
     <div id="mode">
       <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="index.html">
         Enter Visualization Mode
       </a>
     </div>
-    <div id="toggles">
-      <div class="form-check">
-        <input type="checkbox" value="" class="tornado_paths_check" id="tornado_paths_check" checked="checked">
-        <label class="form-check-label" for="tornado_paths_check">
-          Tornado Paths
-        </label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" value="" class="county_bounds_check" id="county_bounds_check" checked="checked">
-        <label class="form-check-label" for="county_bounds_check">
-          County Boundaries
-        </label>
-      </div>
-    </div>
-    <div id="county-info">
-      <div id="county-name">County Name: 
-        <div id="name"></div>
-      </div>
-      <div id="county-count">Number of tornadoes: 
-        <div id="num_tornadoes"></div>
-      </div>
-      <div id="county-fat">Total Fatalities: 
-        <div id="fat"></div>
-      </div>
-      <div id="county-inj">Total Injuries: 
-        <div id="inj"></div>
-      </div>
-    </div>
-    </div>
+  </div>
 
   <div id="lowerbar">
     <div id="county-graph">Select a county to populate the graph</div>
@@ -110,6 +134,10 @@
 
     <!-- Include Leaflet-D3 -->
     <script src="https://cdn.jsdelivr.net/npm/@asymmetrik/leaflet-d3@4.4.0/dist/leaflet-d3.min.js" charset="utf-8"></script>
+
+    <!-- Leaflet ZoomHome -->
+    <script src="lib/leaflet.zoomhome.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>     -->

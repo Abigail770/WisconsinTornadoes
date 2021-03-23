@@ -16,6 +16,10 @@ body{
     z-index: -1;
 }
 
+h4{
+    font-size: 1em;
+}
+
 .bg-orange {
     background-color:#484848;
     color: white;
@@ -24,6 +28,15 @@ body{
     border-right: black 10px solid;
     border-left: black 10px solid;
     border-top: black 5px solid;
+}
+
+button:hover {
+    background-color: rgb(87, 56, 36);
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle:focus{
+    background-color: rgb(87, 56, 36);
+    box-shadow: none;
 }
 
 #date-label{
@@ -39,37 +52,31 @@ body{
     font-weight: bold;
 }
 
-.btn-group{
-    position: absolute;
+#type-buttons{
+    /* position: absolute; */
+    bottom: 25%;
+    padding: 5px;
+    text-align: center;
+}
+
+#anim-buttons{
+    /* position: absolute; */
     bottom: 20%;
+    text-align: center;
 }
 
 #mode{
-    position: absolute;
-    bottom: 10%;
+    /* position: absolute; */
+    bottom: 5%;
     padding: 10px;
     display: block;
+    text-align: center;
 }
 
-#stop{
-    position: absolute;
-    bottom: 30%;
-    padding: 10px;
-    left: 45%;
-}
-
-#play{
-    position: absolute;
-    bottom: 30%;
-    padding: 10px;
-    left: 70%;
-}
-
-#back{
-    position: absolute;
-    bottom: 30%;
-    padding: 10px;
-   left: 20%;
+#control-buttons{
+    bottom: 15%;
+    text-align: center;
+    padding: 5px;
 }
 
 button.btn.btn-primary{
@@ -80,6 +87,12 @@ button.btn.btn-primary{
 
 button.btn.btn-primary:hover {
     background-color: rgb(87, 56, 36);
+}
+
+button.btn.btn-primary:focus{
+    background-color:rgb(87, 56, 36);
+    border-color: #fff;
+    box-shadow: inset 0px 0px 10px 0px #0b141c;
 }
 
 a#count.btn.btn-primary{
@@ -124,9 +137,60 @@ a#count.btn.btn-primary:hover {
     padding: 10px;
     border-bottom: black 10px solid;
 }
-
-#county-info{
+#county-info-text{
+    text-align: center;
+    border-bottom: 5px solid black;
     padding: 10px;
+    color: #BD0026; 
+    text-shadow: 0 0 0.2px #FFF;
+}
+#county-name{
+    padding: 10px;
+    border-bottom: 10px solid black;
+    text-align: center;
+}
+#name{
+    color: #BD0026;
+    text-shadow: 0 0 1.5px #FFF;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+#county-count{
+    padding: 10px;
+    border-bottom: 10px solid black;
+    text-align: center;
+}
+#num_tornadoes{
+    color: #BD0026;
+    text-shadow: 0 0 1.5px #FFF;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+#county-fat{
+    padding: 10px;
+    border-bottom: 10px solid black;
+    text-align: center;
+}
+#fat{
+    color: #BD0026;
+    text-shadow: 0 0 1.5px #FFF;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+#county-inj{
+    padding: 10px;
+    border-bottom: 10px solid black;
+    text-align: center;
+}
+#inj{
+    color: #BD0026;
+    text-shadow: 0 0 1.5px #FFF;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
 }
 
 #lowerbar{
@@ -149,7 +213,8 @@ a#count.btn.btn-primary:hover {
     height: 50%;
     width: 100%;
     position: absolute;
-    padding: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
     border-bottom: black 10px solid;
 }
 
@@ -158,9 +223,11 @@ a#count.btn.btn-primary:hover {
     width: 100%;
     position: absolute;
     top: 50%;
-    padding: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
 }
 
+/* Legend */
 .legend {
     line-height: 18px;
     color: white;
@@ -172,9 +239,139 @@ a#count.btn.btn-primary:hover {
     margin-right: 8px;
 }
 
-.bar { fill: #FD8D3C; }
+/* Graph */
+.bar { 
+    fill: #BD0026;
+    stroke: white;
+    stroke-width: 0.5px;
+ }
 
+ text.x.label{
+     fill: white;
+ }
+
+ text.y.label{
+    fill: white;
+}
+
+/* About Modal Styling */
+.modal .modal-title{
+    color: white;
+}
+
+.modal .modal-content {
+    border-width: 0px;
+    border-radius: 0px;
+    box-shadow: inset 0px 0px 2px 0px white;
+}
+
+.modal .modal-header {
+    padding: 0px;
+    border-width: 0px;
+    border-radius: 0px;
+    background-color: #484848;
+    border: 5px solid black;
+    box-shadow: inset 0px 0px 2px 0px white;
+}
+
+.modal .modal-body {
+    height: 200px;
+    background-color: #484848;
+    color: white;
+    border: 5px solid black;
+    padding-left: 25px;
+    padding-right: 25px;
+    box-shadow: inset 0px 0px 2px 0px white;
+}
+
+.modal .modal-footer {
+    background-color: #484848;
+    border-width: 0px;
+    border-radius: 0px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    border: 5px solid black;
+    box-shadow: inset 0px 0px 2px 0px white;
+}
+.modal hr {
+    border-color: white;
+}
+
+#aboutModal .about-title {
+    padding: 15px;
+}
+
+/* Custom checkboxes */
 #toggles{
     border-bottom: black 10px solid;
     padding: 10px;
 }
+
+/* Customize the label (the container) */
+.container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 1em;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .container:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .container input:checked ~ .checkmark {
+    background-color: #BD0026;
+    border: 1px solid white;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
