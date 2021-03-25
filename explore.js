@@ -224,10 +224,20 @@ function setMap(data){
         });
       }
 
+      var monthFilter = false;
+      var decadeFilter = false;
+      var countyFilter = false;
+
+      var decadeLines = [];
+      var monthLines = [];
+      var countyLines = [];
+
       var newpaths;
       var newinvispaths;
       // when select option from downdown menu, change bounding box of map to geometry of the selected feature
       document.getElementById('countyDrop').addEventListener("change", function (e) {
+        countyFilter = true;
+        countyLines=[];
         var input = e.currentTarget.selectedOptions[0].attributes[0].value;
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
@@ -248,7 +258,6 @@ function setMap(data){
           map.removeLayer(tornadoPaths);
           map.removeLayer(invisPaths);
         }
-        var lines = [];
 
         turf.featureEach(counties, function (currentFeatures, featureIndex) {
           if (currentFeatures.properties.COUNTY_NAM == input){
@@ -256,19 +265,19 @@ function setMap(data){
               var line = paths.features[i].geometry;
         
               if (turf.booleanIntersects(line, currentFeatures.geometry)){
-                lines.push(paths.features[i]);
+                countyLines.push(paths.features[i]);
               }
             }
           }
         });
 
         // Create layer for county paths
-        newpaths = L.geoJson(lines, {
+        newpaths = L.geoJson(countyLines, {
           style: getStyle
         }).addTo(map);
 
         // Invisible buffer layer
-        newinvispaths = L.geoJson(lines, {
+        newinvispaths = L.geoJson(countyLines, {
           onEachFeature: function (feature, layer) {
             $(layer).click(function(){
               newinvispaths.setStyle({opacity: 0, weight: 10});
@@ -286,7 +295,8 @@ function setMap(data){
       var invisDecadePaths;
       // when select option from downdown menu, change bounding box of map to geometry of the selected feature
       document.getElementById('decadeDrop').addEventListener("change", function (e) {
-        
+        decadeFilter = true;
+        decadeLines = [];
         var input = e.currentTarget.selectedOptions[0].attributes[0].value;
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
@@ -307,21 +317,20 @@ function setMap(data){
           map.removeLayer(tornadoPaths);
           map.removeLayer(invisPaths);
         }
-        var lines = [];
-        console.log(input)
+
         turf.featureEach(pathsWithCo, function (currentFeatures, featureIndex) {
           if (currentFeatures.properties.decade == input){
-              lines.push(currentFeatures)
+              decadeLines.push(currentFeatures)
           }
         });
 
         // Create layer for decade paths
-        decadePaths = L.geoJson(lines, {
+        decadePaths = L.geoJson(decadeLines, {
           style: getStyle
         }).addTo(map);
 
         // Invisible buffer layer
-        invisDecadePaths = L.geoJson(lines, {
+        invisDecadePaths = L.geoJson(decadeLines, {
           onEachFeature: function (feature, layer) {
             $(layer).click(function(){
               invisDecadePaths.setStyle({opacity: 0, weight: 10});
@@ -338,6 +347,8 @@ function setMap(data){
       var invismonthPaths;
       // when select option from downdown menu, change bounding box of map to geometry of the selected feature
       document.getElementById('monthDrop').addEventListener("change", function (e) {
+        monthFilter = true;
+        monthLines = [];
         var input = e.currentTarget.selectedOptions[0].attributes[0].value;
 
         if (map.hasLayer(newpaths)){
@@ -360,7 +371,6 @@ function setMap(data){
           map.removeLayer(invisDecadePaths)
         }
 
-        var lines = [];
         turf.featureEach(pathsWithCo, function (currentFeatures, featureIndex) {
           var feature = currentFeatures.properties.mo;
           var selection;
@@ -388,17 +398,17 @@ function setMap(data){
             selection = "December";
           }
           if (selection == input){
-              lines.push(currentFeatures)
+              monthLines.push(currentFeatures)
           }
         });
         
         // Create layer for decade paths
-        monthPaths = L.geoJson(lines, {
+        monthPaths = L.geoJson(monthLines, {
           style: getStyle
         }).addTo(map);
 
         // Invisible buffer layer
-        invismonthPaths = L.geoJson(lines, {
+        invismonthPaths = L.geoJson(monthLines, {
           onEachFeature: function (feature, layer) {
             $(layer).click(function(){
               invismonthPaths.setStyle({opacity: 0, weight: 10});
@@ -408,7 +418,7 @@ function setMap(data){
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
-    
+
       });
 
       function loadPaths(){
