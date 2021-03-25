@@ -355,7 +355,7 @@ function setMap(data){
                             $("#date-label").html("");
                             return;
                         }
-                    }, 800)
+                    }, 1000)
                 }
 
                 function stopAnimation(){
@@ -421,7 +421,7 @@ function setMap(data){
                             $("#date-label").html("");
                             return;
                         }
-                    }, 700)
+                    }, 1000)
                 }
 
                 //// MONTH ANIMATION /////////
@@ -469,7 +469,7 @@ function setMap(data){
                             $("#date-label").html("");
                             return;
                         }
-                    }, 800)
+                    }, 1000)
                 }
 
                 function stopMonthAnimation(){
@@ -532,7 +532,7 @@ function setMap(data){
                             $("#date-label").html("");
                             return;
                         }
-                    }, 700)
+                    }, 1000)
                 }
         }
     }

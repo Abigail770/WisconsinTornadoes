@@ -133,6 +133,32 @@ function setMap(data){
         loadCounties();
       });
 
+      $('#clear').click(function(){
+        $("#dropdowns > select").each(function() { 
+          this.selectedIndex = 0
+        });
+
+        map.eachLayer(function (layer) {
+          map.removeLayer(layer);
+        });
+
+        basemap.addTo(map);
+
+        if ($('#tornado_paths_check').prop('checked')){
+          tornadoPaths.addTo(map);
+          if (legend == undefined){
+            addLegend();
+          }
+          invisPaths.addTo(map);
+        }
+
+        if ($('#county_bounds_check').prop('checked')){
+          countyLayer.addTo(map);
+          countyLayer.bringToBack();
+        }
+
+      })
+
       function populateCountyDropdown(){
         var countyFeat = counties.features
         countyFeat.forEach(function(feature){
@@ -203,10 +229,19 @@ function setMap(data){
       // when select option from downdown menu, change bounding box of map to geometry of the selected feature
       document.getElementById('countyDrop').addEventListener("change", function (e) {
         var input = e.currentTarget.selectedOptions[0].attributes[0].value;
+        if (map.hasLayer(monthPaths)){
+          map.removeLayer(monthPaths)
+          map.removeLayer(invismonthPaths)
+        }
 
         if (map.hasLayer(newpaths)){
           map.removeLayer(newpaths)
           map.removeLayer(newinvispaths)
+        }
+
+        if (map.hasLayer(decadePaths)){
+          map.removeLayer(decadePaths)
+          map.removeLayer(invisDecadePaths)
         }
 
         if (map.hasLayer(invisPaths)){
@@ -251,7 +286,17 @@ function setMap(data){
       var invisDecadePaths;
       // when select option from downdown menu, change bounding box of map to geometry of the selected feature
       document.getElementById('decadeDrop').addEventListener("change", function (e) {
+        
         var input = e.currentTarget.selectedOptions[0].attributes[0].value;
+        if (map.hasLayer(monthPaths)){
+          map.removeLayer(monthPaths)
+          map.removeLayer(invismonthPaths)
+        }
+
+        if (map.hasLayer(newpaths)){
+          map.removeLayer(newpaths)
+          map.removeLayer(newinvispaths)
+        }
 
         if (map.hasLayer(decadePaths)){
           map.removeLayer(decadePaths)
@@ -295,6 +340,11 @@ function setMap(data){
       document.getElementById('monthDrop').addEventListener("change", function (e) {
         var input = e.currentTarget.selectedOptions[0].attributes[0].value;
 
+        if (map.hasLayer(newpaths)){
+          map.removeLayer(newpaths)
+          map.removeLayer(newinvispaths)
+        }
+
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
           map.removeLayer(invismonthPaths)
@@ -304,6 +354,12 @@ function setMap(data){
           map.removeLayer(tornadoPaths);
           map.removeLayer(invisPaths);
         }
+
+        if (map.hasLayer(decadePaths)){
+          map.removeLayer(decadePaths)
+          map.removeLayer(invisDecadePaths)
+        }
+
         var lines = [];
         turf.featureEach(pathsWithCo, function (currentFeatures, featureIndex) {
           var feature = currentFeatures.properties.mo;
