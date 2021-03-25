@@ -15,14 +15,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
     
     <!-- Leaflet -->
-    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" -->
-    <!-- integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-    crossorigin=""/> -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" />
-
-    <!-- Add icon library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <link rel="stylesheet" href="lib/leaflet.zoomhome.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" /> -->
 
     <link rel="stylesheet" href="style.css"/>
   </head>
@@ -30,15 +28,26 @@
     <!-- Navbar -->
     <nav id="navbar" class="navbar navbar-expand-md navbar-dark bg-orange fixed-top">
       <div class="container">
-          <a class="navbar-brand" href="#">Visualizing Patterns in Wisconsin Tornado History</a>
+          <a class="navbar-brand" href="#">Visualizing Wisconsin Tornadoes</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav ml-auto">
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="#" data-toggle="modal" data-target="#mobileModal">Data Filters</a>
-                </li> -->
+                <li class=nav-item>
+                  <div id="dropdowns">
+                    <select id="countyDrop">
+                            <option selected value="">Filter by county</option>
+                    </select>
+                    <select id="decadeDrop">
+                            <option selected value="">Filter by decade</option>
+                    </select>
+                    <select id="monthDrop">
+                            <option selected value="">Filter by month</option>
+                    </select>
+                    <button id="clear" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">Clear Filters</button>
+                  </div>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                 </li>
@@ -47,97 +56,76 @@
       </div>
   </nav>
 
-    <!-- About Modal -->
-    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title about-title" id="aboutModalLabel">About the Map</h5>
-              </div>
-              <div class="modal-body about-body">
-                  <p>This map was created by Abigail Gleason for her independent practicum project class at UW-Madison in the GIS and Web Map Programming Master's degree program.</p>
-                  <hr>
-                  <h5>Data Sources</h5>
-                  <p>Tornado data: <a href='https://www.spc.noaa.gov/gis/svrgis/' target="_blank">NOAA GIS</a></p>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <!-- Filters Modal
-  <div class="modal fade" id="mobileModal" tabindex="-1" role="dialog" aria-labelledby="mobileModalLabel" aria-hidden="true">
+  <!-- About Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title mobile-title" id="mobileModalLabel">Data Filters</h5>
+                <h5 class="modal-title about-title" id="aboutModalLabel">About the Map</h5>
             </div>
-            <div class="modal-body mobile-body">
-              
+            <div class="modal-body about-body">
+                <p>This map was created by Abigail Gleason for her independent practicum project class at UW-Madison in the GIS and Web Map Programming Master's degree program.</p>
+                <hr>
+                <h5>Data Sources</h5>
+                <p>Tornado data: <a href='https://www.spc.noaa.gov/gis/svrgis/' target="_blank">NOAA GIS</a></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Back to Map</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-</div> -->
+  </div>
 
   <!-- Map -->
   <div id="map"></div>
-  <div id="date-label"></div>
-  <div class="slidecontainer">
-    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-  </div>
 
   <div class="container-fluid">
     <div id="sidebar">
-      <div id="info-text">Tornadoes are among the least understood storm events in terms of climate change impacts.  Over the past few decades, there has been no identifiable increase in the number of high magnitude tornadoes in the US.  However, tornado events are increasingly clustered and the number of days with tornado events is increasing.  This could be an effect of climate change. </br></br> <strong>Click "play" or select a type and variable to start the animation.</strong></div>
-      <div id="all-buttons">
-        <div id="type-buttons">
-          <h4>Select an animation type: </h4>
-          <div class="btn-group">
-            <button id="decades" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              Decades
-            </button>
-            <button id="months" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              Months
-            </button>
-          </div>
+      <div id="info-text">This map displays tornado occurrences in Wisconsin between 1950 and 2018.</div>
+      <div id="toggles">
+        <label class="container">Tornado Paths
+          <input type="checkbox" checked="checked" id="tornado_paths_check" class="tornado_paths_check">
+          <span class="checkmark"></span>
+        </label>
+        <label class="container">County Boundaries
+          <input type="checkbox" checked="checked" id="county_bounds_check" class="county_bounds_check">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <div id="county-info"> 
+        <div id="county-info-text">
+          Select a county on the map to populate the information below.
         </div>
-        <div id="anim-buttons">
-          <h4>Select a variable: </h4>
-          <div class="btn-group">
-            <button id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              Tornado Count
-            </button>
-            <button id="sev" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              Tornado Severity
-            </button>
-          </div>
+        <div id="county-name">
+          <h4>County Name:</h4> 
+          <div id="name"></div>
         </div>
-        <div id="control-buttons">
-          <div class="btn-group">
-            <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              <i class="fas fa-backward"></i>
-            </button>
-            <button id="play" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              <i class="fas fa-play"></i>
-            </button>
-            <button id="stop" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-              <i class="fas fa-pause"></i>
-            </button>
-          </div>
+        <div id="county-count">
+          <h4>Number of Tornadoes: </h4>
+          <div id="num_tornadoes"></div>
         </div>
-        <div id="mode">
-          <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="explore.html">
-            Enter Exploration Mode
-          </a>
+        <div id="county-fat">
+          <h4>Total Fatalities: </h4>
+          <div id="fat"></div>
+        </div>
+        <div id="county-inj">
+          <h4>Total Injuries: </h4>
+          <div id="inj"></div>
         </div>
       </div>
+      <div id="mode">
+        <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="viz.html">
+          Enter Visualization Mode
+        </a>
+      </div>
     </div>
-  
+  </div>
+
+  <div class="container-fluid">
+    <div id="lowerbar">
+      <div id="county-graph">Select a county to populate the graph</div>
+      <div id="state-graph">Wisconsin Tornado Count 1950-2018</div>
+    </div>
   </div>
 
     <!-- Scripts -->
@@ -165,16 +153,15 @@
     <!-- Include Leaflet-D3 -->
     <script src="https://cdn.jsdelivr.net/npm/@asymmetrik/leaflet-d3@4.4.0/dist/leaflet-d3.min.js" charset="utf-8"></script>
 
+    <!-- Leaflet ZoomHome -->
+    <script src="lib/leaflet.zoomhome.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>     -->
     <!-- JS Files -->
-
-    <!-- Leaflet slider -->
-    <script src="lib/leaflet-timeline-slider.min.js"></script>
-
-    <script src="main.js"></script>
     <!-- <script src="viz.js"></script> -->
-    <!-- <script src="explore.js"></script> -->
+    <script src="explore.js"></script>
 
   </body>
 </html>

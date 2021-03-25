@@ -16,8 +16,13 @@ function getStyle(feature) {
 }
 
 var promises = [];
-var files = ["wi_tornadoes.json", "tornadoes_by_county.geojson", "1950_hex.geojson", "1960_hex.geojson", "1970_hex.geojson", "1980_hex.geojson", "1990_hex.geojson", "2000_hex.geojson", "2010_hex.geojson", "wi_tornadoes_co.geojson"];
+var files = ["wi_tornadoes.json", "tornadoes_by_county.geojson", "join_1950.json", "join_1960.json", "join_1970.json", "join_1980.json", "join_1990.json", "join_2000.json", "join_2010.json", "wi_tornadoes_co.geojson"];
 var legend = "";
+var filterInfo = ""
+
+var monthFilter = false;
+var decadeFilter = false;
+var countyFilter = false;
 
 window.onload = loadFiles()
 window.onload = setMap()
@@ -97,6 +102,7 @@ function setMap(data){
       var countyLayer = L.geoJson(counties, {
         onEachFeature: function (feature, layer) {
           $(layer).click(function(){
+            $("#county-info-text").css("display", "none");
             countyLayer.setStyle(countyStyle);
             countyLayer.bringToBack();
             highlightFeature(layer);
@@ -113,7 +119,7 @@ function setMap(data){
             $('#inj').append(feature.properties.inj);
             // var intersect = spatialJoin(feature.geometry);
             // console.log(intersect);
-            var yearList = getTornadoData(feature.properties.COUNTY_NAM, feature.geometry);
+            var yearList = getTornadoData(feature.properties.COUNTY_NAM);
             setCountyChart(feature.properties.COUNTY_NAM, yearList);
           })
         },
@@ -128,6 +134,10 @@ function setMap(data){
 
       $('.tornado_paths_check').change(function(){
         loadPaths();
+        if (map.hasLayer(countyLayer)){
+          countyLayer.setStyle(countyStyle);
+          countyLayer.bringToBack();
+        }
       });
       $('.county_bounds_check').change(function(){
         loadCounties();
@@ -137,6 +147,15 @@ function setMap(data){
         $("#dropdowns > select").each(function() { 
           this.selectedIndex = 0
         });
+
+        //Filter info
+        if (filterInfo != ""){
+          filterInfo.remove();
+        }
+
+        decadeFilter = false;
+        monthFilter = false;
+        countyFilter = false;
 
         map.eachLayer(function (layer) {
           map.removeLayer(layer);
@@ -170,39 +189,12 @@ function setMap(data){
       }
 
       function populateDecadeDropdown(){
-        var pathFeat = paths.features
+        // var pathFeat = paths.features
         var pathList = [];
-        pathFeat.forEach(function(feature){
-          var date = feature.properties.date;
-          var year = date.split("-")[0];
-            var decade;
-            if (year.startsWith("19")){
-              if (year[2] == "5"){
-                decade = 1950;
-              }
-              if (year[2] == "6"){
-                decade = 1960;
-              }
-              if (year[2] == "7"){
-                decade = 1970;
-              }
-              if (year[2] == "8"){
-                decade = 1980;
-              }
-              if (year[2] == "9"){
-                decade = 1990;
-              }
-            }
-            else if (year.startsWith("20")){
-              if (year[2] == "0"){
-                decade = 2000;
-              }
-              if (year[2] == "1"){
-                decade = 2010;
-              }
-            }
-            pathList.push(decade);
-        });
+        for (var i = 0; i < pathsWithCo.features.length; i++){
+          var decade = pathsWithCo.features[i].properties.decade;
+            pathList.push(decade)
+        }
 
         let uniquedecades = [...new Set(pathList)];
         uniquedecades.forEach(function(feature){
@@ -224,21 +216,27 @@ function setMap(data){
         });
       }
 
-      var monthFilter = false;
-      var decadeFilter = false;
-      var countyFilter = false;
-
       var decadeLines = [];
       var monthLines = [];
       var countyLines = [];
 
       var newpaths;
       var newinvispaths;
+      var countyInput;
+      var decadeInput;
+      var monthInput;
       // when select option from downdown menu, change bounding box of map to geometry of the selected feature
       document.getElementById('countyDrop').addEventListener("change", function (e) {
         countyFilter = true;
         countyLines=[];
-        var input = e.currentTarget.selectedOptions[0].attributes[0].value;
+        countyInput = e.currentTarget.selectedOptions[0].attributes[0].value;
+
+        var yearList = getTornadoData(countyInput);
+        setCountyChart(countyInput, yearList);
+
+        $('#name').html("");
+        $('#name').append(countyInput);
+
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
           map.removeLayer(invismonthPaths)
@@ -260,16 +258,73 @@ function setMap(data){
         }
 
         turf.featureEach(counties, function (currentFeatures, featureIndex) {
-          if (currentFeatures.properties.COUNTY_NAM == input){
-            for (var i = 0; i < paths.features.length; i++){
-              var line = paths.features[i].geometry;
-        
-              if (turf.booleanIntersects(line, currentFeatures.geometry)){
-                countyLines.push(paths.features[i]);
+          if (currentFeatures.properties.COUNTY_NAM == countyInput){
+            $('#num_tornadoes').html("");
+            $('#num_tornadoes').append(currentFeatures.properties.Join_Count);
+
+            $('#fat').html("");
+            $('#fat').append(currentFeatures.properties.fat);
+
+            $('#inj').html("");
+            $('#inj').append(currentFeatures.properties.inj);
+            if (monthFilter == true && decadeFilter == true){
+              for (var i = 0; i < pathsWithCo.features.length; i++){
+                var line = pathsWithCo.features[i].geometry;
+                if (pathsWithCo.features[i].properties.mo == monthInput && pathsWithCo.features[i].properties.decade == decadeInput){
+                  if (turf.booleanIntersects(line, currentFeatures.geometry)){
+                    countyLines.push(pathsWithCo.features[i]);
+                  }
+                }
+              }
+            }
+            else if (monthFilter == true && decadeFilter == false){
+              for (var i = 0; i < pathsWithCo.features.length; i++){
+                var line = pathsWithCo.features[i].geometry;
+                if (pathsWithCo.features[i].properties.mo == monthInput){
+                  if (turf.booleanIntersects(line, currentFeatures.geometry)){
+                    countyLines.push(pathsWithCo.features[i]);
+                  }
+                }
+              }
+            }
+            else if (decadeFilter == true && monthFilter == false){
+                for (var i = 0; i < pathsWithCo.features.length; i++){
+                  var line = pathsWithCo.features[i].geometry;
+                  if (pathsWithCo.features[i].properties.decade == decadeInput){
+                    if (turf.booleanIntersects(line, currentFeatures.geometry)){
+                      countyLines.push(pathsWithCo.features[i]);
+                    }
+                  }
+                }
+            }
+            else{
+              for (var i = 0; i < paths.features.length; i++){
+                var line = paths.features[i].geometry;
+          
+                if (turf.booleanIntersects(line, currentFeatures.geometry)){
+                  countyLines.push(paths.features[i]);
+                }
               }
             }
           }
         });
+
+        //Filter info control
+        if (filterInfo != ""){
+          filterInfo.remove();
+        }
+
+        filterInfo = L.control({position: 'topright'});
+        filterInfo.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'filterInfo');
+          if (countyLines.length == 0){
+            this._div.innerHTML = "No paths returned from filter";
+          }else{
+            this._div.innerHTML = countyLines.length + " paths returned from filter";
+          }
+          return this._div;
+        };
+        filterInfo.addTo(map);
 
         // Create layer for county paths
         newpaths = L.geoJson(countyLines, {
@@ -287,8 +342,6 @@ function setMap(data){
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
-
-        // map.fitBounds(newpaths.getBounds());
       });
 
       var decadePaths;
@@ -297,7 +350,7 @@ function setMap(data){
       document.getElementById('decadeDrop').addEventListener("change", function (e) {
         decadeFilter = true;
         decadeLines = [];
-        var input = e.currentTarget.selectedOptions[0].attributes[0].value;
+        decadeInput = e.currentTarget.selectedOptions[0].attributes[0].value;
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
           map.removeLayer(invismonthPaths)
@@ -319,10 +372,43 @@ function setMap(data){
         }
 
         turf.featureEach(pathsWithCo, function (currentFeatures, featureIndex) {
-          if (currentFeatures.properties.decade == input){
+          if (monthFilter == true && countyFilter == true){
+              if (currentFeatures.properties.mo == monthInput && currentFeatures.properties.decade == decadeInput && currentFeatures.properties.COUNTY_NAM == countyInput){
+                decadeLines.push(currentFeatures)
+              }
+          }
+          else if (monthFilter == true && countyFilter == false){
+            if (currentFeatures.properties.decade == decadeInput && currentFeatures.properties.mo == monthInput){
               decadeLines.push(currentFeatures)
+            }
+          }
+          else if (countyFilter == true && monthFilter == false){
+            if (currentFeatures.properties.decade == decadeInput && currentFeatures.properties.COUNTY_NAM == countyInput){
+              decadeLines.push(currentFeatures)
+            }
+          }
+          else{
+            if (currentFeatures.properties.decade == decadeInput){
+              decadeLines.push(currentFeatures)
+            }
           }
         });
+
+        if (filterInfo != ""){
+          filterInfo.remove();
+        }
+        //Filter info control
+        filterInfo = L.control({position: 'topright'});
+        filterInfo.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'filterInfo');
+          if (decadeLines.length == 0){
+            this._div.innerHTML = "No paths returned from filter";
+          }else{
+            this._div.innerHTML = decadeLines.length + " paths returned from filter";
+          }
+          return this._div;
+        };
+        filterInfo.addTo(map);
 
         // Create layer for decade paths
         decadePaths = L.geoJson(decadeLines, {
@@ -340,7 +426,6 @@ function setMap(data){
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
-    
       });
 
       var monthPaths;
@@ -349,7 +434,7 @@ function setMap(data){
       document.getElementById('monthDrop').addEventListener("change", function (e) {
         monthFilter = true;
         monthLines = [];
-        var input = e.currentTarget.selectedOptions[0].attributes[0].value;
+        monthInput = e.currentTarget.selectedOptions[0].attributes[0].value;
 
         if (map.hasLayer(newpaths)){
           map.removeLayer(newpaths)
@@ -373,36 +458,71 @@ function setMap(data){
 
         turf.featureEach(pathsWithCo, function (currentFeatures, featureIndex) {
           var feature = currentFeatures.properties.mo;
-          var selection;
-          if (feature == 1){
-            selection = "January";
-          }else if (feature == 3){
-            selection = "March";
-          }else if (feature == 4){
-            selection = "April";
-          }else if (feature == 5){
-            selection = "May";
-          }else if (feature == 6){
-            selection = "June";
-          }else if (feature == 7){
-            selection = "July";
-          }else if (feature == 8){
-            selection = "August";
-          }else if (feature == 9){
-            selection = "September";
-          }else if (feature == 10){
-            selection = "October";
-          }else if (feature == 11){
-            selection = "November";
-          }else if (feature == 12){
-            selection = "December";
+          if (monthInput == "January"){
+            monthInput = 1;
+          }else if (monthInput == "February"){
+            monthInput = 2;
+          }else if (monthInput == "March"){
+            monthInput = 3;
+          }else if (monthInput == "April"){
+            monthInput = 4;
+          }else if (monthInput == "May"){
+            monthInput = 5;
+          }else if (monthInput == "June"){
+            monthInput = 6;
+          }else if (monthInput == "July"){
+            monthInput = 7;
+          }else if (monthInput == "August"){
+            monthInput = 8;
+          }else if (monthInput == "September"){
+            monthInput = 9;
+          }else if (monthInput == "October"){
+            monthInput = 10;
+          }else if (monthInput == "November"){
+            monthInput = 11;
+          }else if (monthInput == "December"){
+            monthInput = 12;
           }
-          if (selection == input){
+          if (decadeFilter == true && countyFilter == true){
+            if (feature == monthInput && currentFeatures.properties.decade == decadeInput && currentFeatures.properties.COUNTY_NAM == countyInput){
+              monthLines.push(currentFeatures)
+            }
+          }
+          else if (decadeFilter == true && countyFilter == false){
+            if (feature == monthInput && currentFeatures.properties.decade == decadeInput){
+              monthLines.push(currentFeatures)
+            }
+          }
+          else if (countyFilter == true && decadeFilter == false){
+            if (feature == monthInput && currentFeatures.properties.COUNTY_NAM == countyInput){
+              monthLines.push(currentFeatures)
+            }
+          }
+          else{
+            if (feature == monthInput){
               monthLines.push(currentFeatures)
           }
+          }
         });
-        
-        // Create layer for decade paths
+
+        //Filter info control
+        if (filterInfo != ""){
+          filterInfo.remove();
+        }
+
+        filterInfo = L.control({position: 'topright'});
+        filterInfo.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'filterInfo');
+          if (monthLines.length == 0){
+            this._div.innerHTML = "No paths returned from filter";
+          }else{
+            this._div.innerHTML = monthLines.length + " paths returned from filter";
+          }
+          return this._div;
+        };
+        filterInfo.addTo(map);
+
+        // Create layer for month paths
         monthPaths = L.geoJson(monthLines, {
           style: getStyle
         }).addTo(map);
@@ -428,6 +548,7 @@ function setMap(data){
 
           // Add invisible layer with buffer to make popups more user friendly
           invisPaths.addTo(map);
+          invisPaths.setStyle({opacity: 0, weight: 10});
         }else{
           if (legend != ""){
             legend.remove();
@@ -442,6 +563,7 @@ function setMap(data){
       function loadCounties(){
         if ($('#county_bounds_check').prop('checked')){
           countyLayer.addTo(map);
+          countyLayer.setStyle(countyStyle)
           countyLayer.bringToBack();
         }
         else{
@@ -450,13 +572,6 @@ function setMap(data){
           }
         }
       }
-
-      // function spatialJoin(countyGeom){
-      //   var joined = paths.features.filter(function (feature) {
-      //     return turf.booleanIntersects(feature, countyGeom);
-      //   });
-      //   return joined;
-      // }
       
       function addLegend(){
         legend = L.control({position: 'bottomleft'});
@@ -480,7 +595,7 @@ function setMap(data){
         legend.addTo(map);
     }
 
-      function getTornadoData(countyName, countyGeom){
+      function getTornadoData(countyName){
         var pathList = [];
         for (var i = 0; i < pathsWithCo.features.length; i++){
           var name = pathsWithCo.features[i].properties.COUNTY_NAM;
@@ -494,47 +609,6 @@ function setMap(data){
           counts[num] = (counts[num] || 0) + 1; 
         });
         return counts;
-
-      //   var years = [];
-      //   for (var i = 0; i < paths.features.length; i++){
-      //     var line = paths.features[i].geometry;
-      //     var date = paths.features[i].properties.date
-      //     if (turf.booleanIntersects(line, countyGeom)){
-      //       var year = date.split("-")[0];
-      //       var decade;
-      //       if (year.startsWith("19")){
-      //         if (year[2] == "5"){
-      //           decade = 1950;
-      //         }
-      //         if (year[2] == "6"){
-      //           decade = 1960;
-      //         }
-      //         if (year[2] == "7"){
-      //           decade = 1970;
-      //         }
-      //         if (year[2] == "8"){
-      //           decade = 1980;
-      //         }
-      //         if (year[2] == "9"){
-      //           decade = 1990;
-      //         }
-      //       }
-      //       else if (year.startsWith("20")){
-      //         if (year[2] == "0"){
-      //           decade = 2000;
-      //         }
-      //         if (year[2] == "1"){
-      //           decade = 2010;
-      //         }
-      //       }
-      //       years.push(decade);
-      //     }
-      //   }
-      //   counts = {};
-      //   years.forEach(function(num) { 
-      //     counts[num] = (counts[num] || 0) + 1; 
-      //   });
-      //   return counts;
        }
 
     }

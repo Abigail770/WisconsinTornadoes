@@ -17,7 +17,24 @@ body{
 }
 
 h4{
+    font-size: 0.9em;
+    text-align: center;
+    padding: 2px;
+}
+
+.filterInfo.leaflet-control {
+	padding: 6px 8px;
     font-size: 1em;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+	text-align:center;
+}
+
+.control_container.leaflet-control {
+    position: fixed;
+    bottom: 10%;
 }
 
 .bg-orange {
@@ -137,6 +154,22 @@ a#count.btn.btn-primary:hover {
     overflow-y: auto;
 }
 
+#sidebar-viz{
+    width: 25%;
+    position: absolute;
+    left: 0px;
+    right: 80%;
+    top: 0px;
+    bottom: 0px;
+    background-color:#484848;
+    box-shadow: inset 0px 0px 2px 0px white;
+    color: white;
+    border-bottom: black 10px solid;
+    border-right:black 10px solid;
+    border-left:black 10px solid;
+    overflow-y: auto;
+}
+
 #info-text{
     padding: 10px;
     border-bottom: black 10px solid;
@@ -145,8 +178,8 @@ a#count.btn.btn-primary:hover {
     text-align: center;
     border-bottom: 5px solid black;
     padding: 10px;
-    color: #BD0026; 
-    text-shadow: 0 0 0.2px #FFF;
+    color: white; 
+    font-weight: bold;
 }
 #county-name{
     /* padding: 10px; */
@@ -420,6 +453,49 @@ a#count.btn.btn-primary:hover {
     } */
 
 /* } */ 
-  /* Slide
+
+/* Slider */
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+  padding: 10px;
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 20px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.8; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 30px; /* Slider handle height */
+  background: #BD0026; /* background color */
+  border: 1px solid white;
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 30px; /* Slider handle height */
+  background: #BD0026; /* background color */
+  border: 1px solid white;
+  cursor: pointer; /* Cursor on hover */
+}
 
   
