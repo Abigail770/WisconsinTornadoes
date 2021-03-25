@@ -264,7 +264,19 @@ function setMap(data){
                         }
                     }
                 });
-                
+
+                function changeMap(value){
+                    if (map.hasLayer(sliderlayer)){
+                        map.removeLayer(sliderlayer);
+                    }
+                    if (selection == "decade"){
+                        console.log("decade")
+                        sliderlayer = L.geoJson(layers[value], {style: countStyle}).addTo(map);
+                    }else if (selection == "month"){
+                        sliderlayer = L.geoJson(monthLayers[value], {style: countStyle}).addTo(map);
+                    }
+                }
+
                 function addLegend(type){
                     if (legend != ""){
                         legend.remove();
@@ -319,8 +331,6 @@ function setMap(data){
                         }
                         layerInUse = L.geoJson(layers[i], {style: sevStyle}).addTo(map);
                         $("#date-label").html("Tornado Severity by Decade: " + labels[i] + "s");
-                        console.log($("#date-label").html())
-                        console.log("271" + i)
                         i++;
                         j++;
                         console.log("274" + i)
@@ -478,10 +488,6 @@ function setMap(data){
                     initMap.addTo(map);
                     $("#date-label").html("");
                 }
-
-                // function pauseMonthAnimation(){
-                //     clearTimeout(animation);
-                // }
 
                 function countMonthAnimate(){
                     console.log("countmonthanimate")

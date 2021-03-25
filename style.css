@@ -80,7 +80,8 @@ button:hover {
 }
 
 button.btn.btn-primary{
-    background-color:#C65C45;
+    /* background-color:#C65C45; */
+    background-color: #BD0026;
     border-color: #fff;
     box-shadow: inset 0px 0px 10px 0px #0b141c;
 }
@@ -96,7 +97,8 @@ button.btn.btn-primary:focus{
 }
 
 a#count.btn.btn-primary{
-    background-color:#C65C45;
+    /* background-color:#C65C45; */
+    background-color: #BD0026;
     border-color: #fff;
     box-shadow: inset 0px 0px 10px 0px #0b141c;
 }
@@ -108,7 +110,8 @@ a#count.btn.btn-primary:hover {
 .btn-primary:not(:disabled):not(.disabled).active, 
 .btn-primary:not(:disabled):not(.disabled):active, 
 .show>.btn-primary.dropdown-toggle {
-    background-color:#C65C45;
+    background-color: #BD0026;
+    /* background-color:#C65C45; */
     border-color: #fff;
 }
 
@@ -131,6 +134,7 @@ a#count.btn.btn-primary:hover {
     border-bottom: black 10px solid;
     border-right:black 10px solid;
     border-left:black 10px solid;
+    overflow-y: auto;
 }
 
 #info-text{
@@ -145,7 +149,7 @@ a#count.btn.btn-primary:hover {
     text-shadow: 0 0 0.2px #FFF;
 }
 #county-name{
-    padding: 10px;
+    /* padding: 10px; */
     border-bottom: 10px solid black;
     text-align: center;
 }
@@ -157,7 +161,7 @@ a#count.btn.btn-primary:hover {
     text-align: center;
 }
 #county-count{
-    padding: 10px;
+    /* padding: 10px; */
     border-bottom: 10px solid black;
     text-align: center;
 }
@@ -169,7 +173,7 @@ a#count.btn.btn-primary:hover {
     text-align: center;
 }
 #county-fat{
-    padding: 10px;
+    /* padding: 10px; */
     border-bottom: 10px solid black;
     text-align: center;
 }
@@ -181,7 +185,7 @@ a#count.btn.btn-primary:hover {
     text-align: center;
 }
 #county-inj{
-    padding: 10px;
+    /* padding: 10px; */
     border-bottom: 10px solid black;
     text-align: center;
 }
@@ -375,3 +379,47 @@ a#count.btn.btn-primary:hover {
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
   }
+
+  /* Dropdowns */
+  #dropdowns{
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 10px;
+    line-height: 45px;
+  }
+
+  #countyDrop {
+    background-color: #BD0026;
+    padding: 10px;
+    color: white;
+    border: 0.5px solid white;
+    box-shadow: inset 0px 0px 10px 0px #0b141c;
+}
+
+#decadeDrop {
+    background-color: #BD0026;
+    padding: 10px;
+    color: white;
+    border: 0.5px solid white;
+    box-shadow: inset 0px 0px 10px 0px #0b141c;
+}
+#monthDrop {
+    background-color: #BD0026;
+    padding: 10px;
+    color: white;
+    border: 0.5px solid white;
+    box-shadow: inset 0px 0px 10px 0px #0b141c;
+}
+/* 
+@media screen and (max-width: 600px){
+    /* #sidebar{
+        display: none;
+    }
+    #lowerbar{
+        display: none;
+    } */
+
+/* } */ 
+  /* Slide
+
+  

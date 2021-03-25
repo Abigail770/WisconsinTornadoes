@@ -37,6 +37,9 @@
           <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
+                  <a class="nav-link" href="#" data-toggle="modal" data-target="#mobileModal">Data Filters</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                 </li>
               </ul>
@@ -64,53 +67,79 @@
       </div>
   </div>
 
+  <!-- Filters Modal
+  <div class="modal fade" id="mobileModal" tabindex="-1" role="dialog" aria-labelledby="mobileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mobile-title" id="mobileModalLabel">Data Filters</h5>
+            </div>
+            <div class="modal-body mobile-body">
+              
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Back to Map</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
   <!-- Map -->
   <div id="map"></div>
   <div id="date-label"></div>
+  <div class="slidecontainer">
+    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+  </div>
 
-  <div id="sidebar">
-    <div id="info-text">Tornadoes are among the least understood storm events in terms of climate change impacts.  Over the past few decades, there has been no identifiable increase in the number of high magnitude tornadoes in the US.  However, tornado events are increasingly clustered and the number of days with tornado events is increasing.  This could be an effect of climate change. </br></br> <strong>Click "play" or select a type and variable to start the animation.</strong></div>
-    <div id="all-buttons">
-      <div id="type-buttons">
-        <h4>Select an animation type: </h4>
-        <div class="btn-group">
-          <button id="decades" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            Decades
-          </button>
-          <button id="months" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            Months
-          </button>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- <div class="col-md"> -->
+        <div id="sidebar">
+          <div id="info-text">Tornadoes are among the least understood storm events in terms of climate change impacts.  Over the past few decades, there has been no identifiable increase in the number of high magnitude tornadoes in the US.  However, tornado events are increasingly clustered and the number of days with tornado events is increasing.  This could be an effect of climate change. </br></br> <strong>Click "play" or select a type and variable to start the animation.</strong></div>
+          <div id="all-buttons">
+            <div id="type-buttons">
+              <h4>Select an animation type: </h4>
+              <div class="btn-group">
+                <button id="decades" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  Decades
+                </button>
+                <button id="months" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  Months
+                </button>
+              </div>
+            </div>
+            <div id="anim-buttons">
+              <h4>Select a variable: </h4>
+              <div class="btn-group">
+                <button id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  Tornado Count
+                </button>
+                <button id="sev" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  Tornado Severity
+                </button>
+              </div>
+            </div>
+            <div id="control-buttons">
+              <div class="btn-group">
+                <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  <i class="fas fa-backward"></i>
+                </button>
+                <button id="play" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button id="stop" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  <i class="fas fa-pause"></i>
+                </button>
+              </div>
+            </div>
+            <div id="mode">
+              <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="explore.html">
+                Enter Exploration Mode
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-      <div id="anim-buttons">
-        <h4>Select a variable: </h4>
-        <div class="btn-group">
-          <button id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            Tornado Count
-          </button>
-          <button id="sev" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            Tornado Severity
-          </button>
-        </div>
-      </div>
-      <div id="control-buttons">
-        <div class="btn-group">
-          <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            <i class="fas fa-backward"></i>
-          </button>
-          <button id="play" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            <i class="fas fa-play"></i>
-          </button>
-          <button id="stop" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
-            <i class="fas fa-pause"></i>
-          </button>
-        </div>
-      </div>
-      <div id="mode">
-        <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="explore.html">
-          Enter Exploration Mode
-        </a>
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 
@@ -142,6 +171,10 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>     -->
     <!-- JS Files -->
+
+    <!-- Leaflet slider -->
+    <script src="lib/leaflet-timeline-slider.min.js"></script>
+
     <script src="main.js"></script>
     <!-- <script src="viz.js"></script> -->
     <!-- <script src="explore.js"></script> -->

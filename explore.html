@@ -34,6 +34,19 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav ml-auto">
+                <li class=nav-item>
+                  <div id="dropdowns">
+                    <select id="countyDrop">
+                            <option selected value="">Filter by county</option>
+                    </select>
+                    <select id="decadeDrop">
+                            <option selected value="">Filter by decade</option>
+                    </select>
+                    <select id="monthDrop">
+                            <option selected value="">Filter by month</option>
+                    </select>
+                  </div>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                 </li>
@@ -65,49 +78,53 @@
   <!-- Map -->
   <div id="map"></div>
 
-  <div id="sidebar">
-    <div id="info-text">This map displays tornado occurrences in Wisconsin between 1950 and 2018.</div>
-    <div id="toggles">
-      <label class="container">Tornado Paths
-        <input type="checkbox" checked="checked" id="tornado_paths_check" class="tornado_paths_check">
-        <span class="checkmark"></span>
-      </label>
-      <label class="container">County Boundaries
-        <input type="checkbox" checked="checked" id="county_bounds_check" class="county_bounds_check">
-        <span class="checkmark"></span>
-      </label>
-    </div>
-    <div id="county-info"> 
-      <div id="county-info-text">
-        Select a county on the map to populate the information below.
+  <div class="container-fluid">
+    <div id="sidebar">
+      <div id="info-text">This map displays tornado occurrences in Wisconsin between 1950 and 2018.</div>
+      <div id="toggles">
+        <label class="container">Tornado Paths
+          <input type="checkbox" checked="checked" id="tornado_paths_check" class="tornado_paths_check">
+          <span class="checkmark"></span>
+        </label>
+        <label class="container">County Boundaries
+          <input type="checkbox" checked="checked" id="county_bounds_check" class="county_bounds_check">
+          <span class="checkmark"></span>
+        </label>
       </div>
-      <div id="county-name">
-        <h4>County Name:</h4> 
-        <div id="name"></div>
+      <div id="county-info"> 
+        <div id="county-info-text">
+          Select a county on the map to populate the information below.
+        </div>
+        <div id="county-name">
+          <h4>County Name:</h4> 
+          <div id="name"></div>
+        </div>
+        <div id="county-count">
+          <h4>Number of Tornadoes: </h4>
+          <div id="num_tornadoes"></div>
+        </div>
+        <div id="county-fat">
+          <h4>Total Fatalities: </h4>
+          <div id="fat"></div>
+        </div>
+        <div id="county-inj">
+          <h4>Total Injuries: </h4>
+          <div id="inj"></div>
+        </div>
       </div>
-      <div id="county-count">
-        <h4>Number of Tornadoes: </h4>
-        <div id="num_tornadoes"></div>
+      <div id="mode">
+        <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="index.html">
+          Enter Visualization Mode
+        </a>
       </div>
-      <div id="county-fat">
-        <h4>Total Fatalities: </h4>
-        <div id="fat"></div>
-      </div>
-      <div id="county-inj">
-        <h4>Total Injuries: </h4>
-        <div id="inj"></div>
-      </div>
-    </div>
-    <div id="mode">
-      <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="index.html">
-        Enter Visualization Mode
-      </a>
     </div>
   </div>
 
-  <div id="lowerbar">
-    <div id="county-graph">Select a county to populate the graph</div>
-    <div id="state-graph">Wisconsin Tornado Count 1950-2018</div>
+  <div class="container-fluid">
+    <div id="lowerbar">
+      <div id="county-graph">Select a county to populate the graph</div>
+      <div id="state-graph">Wisconsin Tornado Count 1950-2018</div>
+    </div>
   </div>
 
     <!-- Scripts -->
