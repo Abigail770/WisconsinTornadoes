@@ -443,16 +443,14 @@ a#count.btn.btn-primary:hover {
     border: 0.5px solid white;
     box-shadow: inset 0px 0px 10px 0px #0b141c;
 }
+/* #severityDrop {
+    background-color: #BD0026;
+    padding: 10px;
+    color: white;
+    border: 0.5px solid white;
+    box-shadow: inset 0px 0px 10px 0px #0b141c;
+} */
 /* 
-@media screen and (max-width: 600px){
-    /* #sidebar{
-        display: none;
-    }
-    #lowerbar{
-        display: none;
-    } */
-
-/* } */ 
 
 /* Slider */
 
@@ -496,6 +494,25 @@ a#count.btn.btn-primary:hover {
   background: #BD0026; /* background color */
   border: 1px solid white;
   cursor: pointer; /* Cursor on hover */
+}
+/* 
+@media screen and (max-width: 1068px){
+    #sidebar{
+        display: none;
+    } */
+    /* #sidebar-viz{
+        display: none;
+    } */
+    /* #lowerbar{
+        display: none;
+    }
+    #mobile-page{
+        display: block;
+    }
+}  */
+
+#mobile-page{
+    display: none;
 }
 
   

@@ -26,6 +26,23 @@ var countyFilter = false;
 
 window.onload = loadFiles()
 window.onload = setMap()
+// $(window).resize(resize);
+
+// function resize(){
+//   var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
+//   if (mediaQuery.matches) {
+//     $('#map').css('left', "0");
+//     $('#map').css('right', "0");
+//   }
+//   else{
+//     $('#map').css('left', "20%");
+//     $('#map').css('right', "20%");
+//     $('#sidebar').css('top', $('#navbar').outerHeight());
+//     $('#lowerbar').css('top', $('#navbar').outerHeight());
+//   }
+//   // Set map top == navbar height so the navbar will not hide the top of it
+//   $('#map').css('top', $('#navbar').outerHeight());
+// }
 
 // Load csv and geojson files
 function loadFiles(){
@@ -42,20 +59,22 @@ function loadFiles(){
 function setMap(data){
     var map = L.map('map',{
       maxZoom: 18,
+      zoom: 7,
+      center: [44.5, -86.8],
       zoomControl: false,
-    }).setView([44.5, -86.8], 7);
+    });
 
     // Add Leaflet zoom home control
     var zoomHome = L.Control.zoomHome();
     zoomHome.addTo(map);
 
-    // Set map top == navbar height so the navbar will not hide the top of it
-    $('#map').css('top', $('#navbar').outerHeight());
     $('#map').css('left', "20%");
     $('#map').css('right', "20%");
     // $('#map').css('bottom', $('#lowerbar').outerHeight());
     $('#sidebar').css('top', $('#navbar').outerHeight());
     $('#lowerbar').css('top', $('#navbar').outerHeight());
+    // Set map top == navbar height so the navbar will not hide the top of it
+    $('#map').css('top', $('#navbar').outerHeight());
 
     var basemap = L.esri.basemapLayer('DarkGray').addTo(map);
 
@@ -131,6 +150,7 @@ function setMap(data){
       populateCountyDropdown();
       populateDecadeDropdown();
       populateMonthDropdown();
+      // populateSevDropdown();
 
       $('.tornado_paths_check').change(function(){
         loadPaths();
@@ -180,16 +200,20 @@ function setMap(data){
 
       function populateCountyDropdown(){
         var countyFeat = counties.features
+        var countyList = [];
         countyFeat.forEach(function(feature){
+          countyList.push(feature.properties.COUNTY_NAM);
+        });
+        countyList.sort();
+        countyList.forEach(function(feature){
           option = document.createElement("option")
-          option.setAttribute("value", feature.properties.COUNTY_NAM)
-          option.textContent = feature.properties.COUNTY_NAM
+          option.setAttribute("value", feature)
+          option.textContent = feature
           document.getElementById("countyDrop").appendChild(option);
         });
       }
 
       function populateDecadeDropdown(){
-        // var pathFeat = paths.features
         var pathList = [];
         for (var i = 0; i < pathsWithCo.features.length; i++){
           var decade = pathsWithCo.features[i].properties.decade;
@@ -215,6 +239,17 @@ function setMap(data){
           document.getElementById("monthDrop").appendChild(option);
         });
       }
+
+      // function populateSevDropdown(){
+      //   var sevLabels = [0, 1, 2, 3, 4, 5];
+
+      //   sevLabels.forEach(function(feature){
+      //     option = document.createElement("option")
+      //     option.setAttribute("value", feature)
+      //     option.textContent = feature
+      //     document.getElementById("severityDrop").appendChild(option);
+      //   });
+      // }
 
       var decadeLines = [];
       var monthLines = [];
@@ -579,13 +614,14 @@ function setMap(data){
         legend.onAdd = function (map) {
 
             var div = L.DomUtil.create('div', 'info legend')
+            div.innerHTML += 'Legend <br>(F-Scale, EF scale after January 2007)</h4><br>'
             var grades = [];
             grades = [0, 1, 2, 3, 4, 5];
             // generate a label with a colored square for each interval
             for (var i = 0; i < grades.length; i++) {
                 div.innerHTML +=
                     '<i style="background:' + getColor(grades[i]) + '"></i> ' +
-                    grades[i] + ' EF <br>';
+                    grades[i] + '<br>';
             }
             // var labels = [];
 

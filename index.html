@@ -28,7 +28,7 @@
     <!-- Navbar -->
     <nav id="navbar" class="navbar navbar-expand-md navbar-dark bg-orange fixed-top">
       <div class="container">
-          <a class="navbar-brand" href="#">Visualizing Wisconsin Tornadoes</a>
+          <a class="navbar-brand">Visualizing Wisconsin Tornadoes</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
           </button>
@@ -45,7 +45,10 @@
                     <select id="monthDrop">
                             <option selected value="">Filter by month</option>
                     </select>
-                    <button id="clear" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">Clear Filters</button>
+                    <!-- <select id="severityDrop">
+                            <option selected value="">Filter by severity</option>
+                    </select> -->
+                    <button id="clear" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">Clear <br> Filters</button>
                   </div>
                 </li>
                 <li class="nav-item">
@@ -125,6 +128,12 @@
     <div id="lowerbar">
       <div id="county-graph">Select a county to populate the graph</div>
       <div id="state-graph">Wisconsin Tornado Count 1950-2018</div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div id="mobile-page">
+
     </div>
   </div>
 
