@@ -8,19 +8,7 @@ window.onload = loadFiles()
 window.onload = setMap()
 
 // $(window).resize(setMap);
-
-// function resize(){
-//   var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
-//   if (mediaQuery.matches) {
-//     $('#map').css('left', "0");
-//   }
-//   else{
-//     $('#map').css('left', "25%");
-//     $('#sidebar-viz').css('top', $('#navbar').outerHeight());
-//   }
-//   // Set map top == navbar height so the navbar will not hide the top of it
-//   $('#map').css('top', $('#navbar').outerHeight());
-// }
+$(window).resize(function(){location.reload();});
 
 var sliderlayer;
 
@@ -39,46 +27,70 @@ function loadFiles(){
 // Add Leaflet map and load data
 function setMap(){
     if (map){
+        map.off();
         map.remove();
     }
-    map = L.map('map',{
-        zoomControl: false,
-        scrollWheelZoom: false,
-        zoom: 7,
-        center: [44.7, -88.5],
-        maxZoom: 18,
-        dragging: false,
-    });
     
-    // Set div positions so they don't overlap each other
+    var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
+    if (mediaQuery.matches) {
+        map = L.map('map',{
+            zoomControl: false,
+            scrollWheelZoom: false,
+            zoom: 6,
+            center: [44.4, -89.7],
+            maxZoom: 18,
+            dragging: false,
+        });
+        $('#map').css('left', "0");
+        $('#map').css('right', "0");
+        $('#info-text').html('Tornadoes are among the least understood storm events in terms of climate change impacts.  Over the past few decades, there has been no identifiable increase in the number of high magnitude tornadoes in the US.  However, tornado events are increasingly clustered and the number of days with tornado events is increasing.  This could be an effect of climate change. </br></br> <strong>Select a type and variable.  Then use the map controls or slider to start the animation.</strong>')
+        $('#mobile-div').append($('#control-buttons'));
+        $('#mobile-div').append($('#slidecontainer'));
+        $('#mobile-div').css('top', $('#navbar').outerHeight());
+        $('#date-label').css('top', $('#navbar').outerHeight() + $('#mobile-div').outerHeight());
+        $('#control-text').html("");
+        mobileContent = L.control({position: 'bottomright'});
+        mobileContent.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'mobile-button');
+          this._div.innerHTML = '<button id="mobile-graphs" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off"><i class="fas fa-filter"></i></button>';
+          L.DomEvent
+              .addListener(this._div, 'click', L.DomEvent.stopPropagation)
+              .addListener(this._div, 'click', L.DomEvent.preventDefault)
+              .addListener(this._div, 'click', function () { getMobileContent(); });
+          return this._div;
+        };
+        mobileContent.addTo(map);
+    }
+    else{
+        map = L.map('map',{
+            zoomControl: false,
+            scrollWheelZoom: false,
+            zoom: 7,
+            center: [44.7, -88.5],
+            maxZoom: 18,
+            dragging: false,
+        });
+        $('#map').css('left', "25%");
+        $('#sidebar-viz').css('top', $('#navbar').outerHeight());
+        $('#date-label').css('top', $('#navbar').outerHeight());
+        $('#date-label').css('left', $('#sidebar-viz').width() + 20 + ($('#map').width() * 0.3));
+    }
+    // Set map top == navbar height so the navbar will not hide the top of it
     $('#map').css('top', $('#navbar').outerHeight());
-    $('#map').css('left', "25%");
+
+    // Set div positions so they don't overlap each other
     $('#map').css('border-right', 'black 10px solid');
-    $('#sidebar-viz').css('top', $('#navbar').outerHeight());
-    $('#date-label').css('top', $('#navbar').outerHeight());
-    $('#date-label').css('left', $('#sidebar-viz').width() + 20 + ($('#map').width() * 0.3));
     
-    // var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
-    // if (mediaQuery.matches) {
-    //     $('#map').css('left', "0");
-    //     $('#map').css('right', "0");
-    //     // map.setView([43.7, -89.6], 6);
-    // }
-    // else{
-    //     $('#map').css('left', "25%");
-    //     $('#sidebar-viz').css('top', $('#navbar').outerHeight());
-    // }
 
     // Load basemap
     var basemap = L.esri.basemapLayer('DarkGray').addTo(map);
-    
-    // // set center coordinates
-    // var centerlat = 34.05;
-    // var centerlon = -118.25;
-    
-    // //parameters for hex grid
-    // var extent = [-93.988114, 42.191983, -86.705415, 47.080621];
-    // var cellWidth = 20;
+
+    function getMobileContent(){
+        $("#mobile-content").css('display', 'block');
+        $('#mobile-content').css('top', $('#navbar').outerHeight());
+        $('#mobile-content').append($('#sidebar-viz'));
+        $('#sidebar-viz').css('display', 'block');
+    }
 
     // Call ready function when files are loaded
     Promise.all(promises).then(ready);
@@ -642,6 +654,10 @@ function setMap(){
                         }
                     }, 1000)
                 }
+
+                $("#back").click(function(){
+                    $("#mobile-content").css('display', 'none');
+                  });
         }
     }
 }

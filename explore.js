@@ -18,7 +18,10 @@ function getStyle(feature) {
 var promises = [];
 var files = ["wi_tornadoes.json", "tornadoes_by_county.geojson", "join_1950.json", "join_1960.json", "join_1970.json", "join_1980.json", "join_1990.json", "join_2000.json", "join_2010.json", "wi_tornadoes_co.geojson"];
 var legend = "";
-var filterInfo = ""
+var filterInfo = "";
+var mobileContent = "";
+var map;
+var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
 
 var monthFilter = false;
 var decadeFilter = false;
@@ -26,23 +29,8 @@ var countyFilter = false;
 
 window.onload = loadFiles()
 window.onload = setMap()
-// $(window).resize(resize);
-
-// function resize(){
-//   var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
-//   if (mediaQuery.matches) {
-//     $('#map').css('left', "0");
-//     $('#map').css('right', "0");
-//   }
-//   else{
-//     $('#map').css('left', "20%");
-//     $('#map').css('right', "20%");
-//     $('#sidebar').css('top', $('#navbar').outerHeight());
-//     $('#lowerbar').css('top', $('#navbar').outerHeight());
-//   }
-//   // Set map top == navbar height so the navbar will not hide the top of it
-//   $('#map').css('top', $('#navbar').outerHeight());
-// }
+$(window).resize(function(){location.reload();});
+// $(window).resize(setMap);
 
 // Load csv and geojson files
 function loadFiles(){
@@ -56,25 +44,42 @@ function loadFiles(){
     });
 }
 
-function setMap(data){
-    var map = L.map('map',{
-      maxZoom: 18,
-      zoom: 7,
-      center: [44.5, -86.8],
-      zoomControl: false,
-    });
+function setMap(){
+    if (map){
+      map.off();
+      map.remove();
+    }
+
+    if (mediaQuery.matches){
+      map = L.map('map',{
+        maxZoom: 18,
+        zoom: 6,
+        center: [43.7, -89.6],
+        zoomControl: false,
+      });
+    }else{
+      map = L.map('map',{
+        maxZoom: 18,
+        zoom: 7,
+        center: [44.5, -86.8],
+        zoomControl: false,
+      });
+    }
 
     // Add Leaflet zoom home control
     var zoomHome = L.Control.zoomHome();
     zoomHome.addTo(map);
 
-    $('#map').css('left', "20%");
-    $('#map').css('right', "20%");
-    // $('#map').css('bottom', $('#lowerbar').outerHeight());
-    $('#sidebar').css('top', $('#navbar').outerHeight());
-    $('#lowerbar').css('top', $('#navbar').outerHeight());
     // Set map top == navbar height so the navbar will not hide the top of it
     $('#map').css('top', $('#navbar').outerHeight());
+
+    // $('#map').css('left', "20%");
+    // $('#map').css('right', "20%");
+    // // $('#map').css('bottom', $('#lowerbar').outerHeight());
+    // $('#sidebar').css('top', $('#navbar').outerHeight());
+    // $('#lowerbar').css('top', $('#navbar').outerHeight());
+    // // Set map top == navbar height so the navbar will not hide the top of it
+    // $('#map').css('top', $('#navbar').outerHeight());
 
     var basemap = L.esri.basemapLayer('DarkGray').addTo(map);
 
@@ -94,8 +99,38 @@ function setMap(data){
       var pathsWithCo = data[9];
       var decades = [hex1950, hex1960, hex1970, hex1980, hex1990, hex2000, hex2010];
 
-      setStateChart(paths);
+      $("#county-graph").html("Select a county to populate the graph");
 
+      if ($("#mobile-button")){
+        $("#mobile-button").remove();
+      }
+      if (mediaQuery.matches) {
+        $('#map').css('left', "0");
+        $('#map').css('right', "0");
+        mobileContent = L.control({position: 'bottomright'});
+        mobileContent.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'mobile-button');
+          this._div.innerHTML = '<button id="mobile-graphs" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off"><i class="fas fa-filter"></i></button>';
+          L.DomEvent
+              .addListener(this._div, 'click', L.DomEvent.stopPropagation)
+              .addListener(this._div, 'click', L.DomEvent.preventDefault)
+              .addListener(this._div, 'click', function () { getMobileContent(); });
+          return this._div;
+        };
+        mobileContent.addTo(map);
+        // $('#sidebar').css('top', $('#navbar').outerHeight() + $('#dropdowns-mobile').height())
+      }
+      else{
+        setStateChart(paths);
+        $('#mobile-content').css('display', 'none');
+        $('#map').css('left', "20%");
+        $('#map').css('right', "20%");
+        $('#sidebar').css('top', $('#navbar').outerHeight());
+        $('#lowerbar').css('top', $('#navbar').outerHeight());
+        if (mobileContent != ""){
+          mobileContent.remove();
+        }
+      }
       var countyStyle = {
         fillColor: '#000080',
         weight: 1,
@@ -145,15 +180,27 @@ function setMap(data){
         style: countyStyle
       })
 
+      function getMobileContent(){
+        $("#mobile-content").css('display', 'block');
+        $('#mobile-content').css('top', $('#navbar').outerHeight());
+        populateCountyDropdown(true);
+        populateDecadeDropdown(true);
+        populateMonthDropdown(true);
+        $('#mobile-content').append($('#sidebar'));
+        $('#sidebar').css('display', 'block');
+        // $('#sidebar').css('top', $('#navbar').outerHeight() + $('#dropdowns-mobile').height());
+      }
+
       loadPaths();
       loadCounties();
-      populateCountyDropdown();
-      populateDecadeDropdown();
-      populateMonthDropdown();
+      populateCountyDropdown(false);
+      populateDecadeDropdown(false);
+      populateMonthDropdown(false);
       // populateSevDropdown();
 
-      $('.tornado_paths_check').change(function(){
+      document.querySelector('.tornado_paths_check').addEventListener('change', function(){
         loadPaths();
+
         if (map.hasLayer(countyLayer)){
           countyLayer.setStyle(countyStyle);
           countyLayer.bringToBack();
@@ -163,8 +210,12 @@ function setMap(data){
         loadCounties();
       });
 
-      $('#clear').click(function(){
+      function clearFilters(){
         $("#dropdowns > select").each(function() { 
+          this.selectedIndex = 0
+        });
+
+        $("#dropdowns-mobile > select").each(function() { 
           this.selectedIndex = 0
         });
 
@@ -195,10 +246,11 @@ function setMap(data){
           countyLayer.addTo(map);
           countyLayer.bringToBack();
         }
+      }
+      $("#clear-mobile").click(clearFilters)
+      $('#clear').click(clearFilters)
 
-      })
-
-      function populateCountyDropdown(){
+      function populateCountyDropdown(isMobile){
         var countyFeat = counties.features
         var countyList = [];
         countyFeat.forEach(function(feature){
@@ -209,11 +261,15 @@ function setMap(data){
           option = document.createElement("option")
           option.setAttribute("value", feature)
           option.textContent = feature
-          document.getElementById("countyDrop").appendChild(option);
+          if (isMobile){
+            document.getElementById("countyMobileDrop").appendChild(option);
+          }else{
+            document.getElementById("countyDrop").appendChild(option);
+          }
         });
       }
 
-      function populateDecadeDropdown(){
+      function populateDecadeDropdown(isMobile){
         var pathList = [];
         for (var i = 0; i < pathsWithCo.features.length; i++){
           var decade = pathsWithCo.features[i].properties.decade;
@@ -225,18 +281,26 @@ function setMap(data){
           option = document.createElement("option")
           option.setAttribute("value", feature)
           option.textContent = feature
-          document.getElementById("decadeDrop").appendChild(option);
+          if (isMobile){
+            document.getElementById("decadeMobileDrop").appendChild(option);
+          }else{
+            document.getElementById("decadeDrop").appendChild(option);
+          }
         });
       }
 
-      function populateMonthDropdown(){
+      function populateMonthDropdown(isMobile){
         var monthLabels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
         monthLabels.forEach(function(feature){
           option = document.createElement("option")
           option.setAttribute("value", feature)
           option.textContent = feature
-          document.getElementById("monthDrop").appendChild(option);
+          if (isMobile){
+            document.getElementById("monthMobileDrop").appendChild(option);
+          }else{
+            document.getElementById("monthDrop").appendChild(option);
+          }
         });
       }
 
@@ -260,8 +324,8 @@ function setMap(data){
       var countyInput;
       var decadeInput;
       var monthInput;
-      // when select option from downdown menu, change bounding box of map to geometry of the selected feature
-      document.getElementById('countyDrop').addEventListener("change", function (e) {
+
+      function countyDrop(e){
         countyFilter = true;
         countyLines=[];
         countyInput = e.currentTarget.selectedOptions[0].attributes[0].value;
@@ -377,12 +441,20 @@ function setMap(data){
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
+      }
+      // when select option from downdown menu, change bounding box of map to geometry of the selected feature
+      document.getElementById('countyDrop').addEventListener("change", function(e){
+        countyDrop(e)
+      });
+
+      document.getElementById('countyMobileDrop').addEventListener("change", function(e){
+        countyDrop(e)
       });
 
       var decadePaths;
       var invisDecadePaths;
-      // when select option from downdown menu, change bounding box of map to geometry of the selected feature
-      document.getElementById('decadeDrop').addEventListener("change", function (e) {
+
+      function decadeDrop(e){
         decadeFilter = true;
         decadeLines = [];
         decadeInput = e.currentTarget.selectedOptions[0].attributes[0].value;
@@ -461,12 +533,20 @@ function setMap(data){
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
+      }
+      // when select option from downdown menu, change bounding box of map to geometry of the selected feature
+      document.getElementById('decadeDrop').addEventListener("change", function (e) {
+        decadeDrop(e);
+      });
+
+      document.getElementById('decadeMobileDrop').addEventListener("change", function (e) {
+        decadeDrop(e);
       });
 
       var monthPaths;
       var invismonthPaths;
-      // when select option from downdown menu, change bounding box of map to geometry of the selected feature
-      document.getElementById('monthDrop').addEventListener("change", function (e) {
+
+      function monthDrop(e){
         monthFilter = true;
         monthLines = [];
         monthInput = e.currentTarget.selectedOptions[0].attributes[0].value;
@@ -573,7 +653,14 @@ function setMap(data){
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
+      }
+      // when select option from downdown menu, change bounding box of map to geometry of the selected feature
+      document.getElementById('monthDrop').addEventListener("change", function (e) {
+        monthDrop(e)
+      });
 
+      document.getElementById('monthMobileDrop').addEventListener("change", function (e) {
+        monthDrop(e)
       });
 
       function loadPaths(){
@@ -614,7 +701,7 @@ function setMap(data){
         legend.onAdd = function (map) {
 
             var div = L.DomUtil.create('div', 'info legend')
-            div.innerHTML += 'Legend <br>(F-Scale, EF scale after January 2007)</h4><br>'
+            div.innerHTML += '<h3>Legend <br>(F-Scale, EF scale after January 2007)<br></h3>'
             var grades = [];
             grades = [0, 1, 2, 3, 4, 5];
             // generate a label with a colored square for each interval
@@ -672,12 +759,14 @@ function highlightPath(feature){
 
 function setCountyChart(countyName, yearList){
   $("#county-graph").html(countyName);
+  var svgWidth = $("#county-graph").width(),
+      svgHeight = $("#county-graph").height()* 0.8;
   /////////////Create D3 County graph/////////////////
   var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 20, bottom: 40, left: 40},
-  width = 280 - margin.left - margin.right,
-  height = 250 - margin.top - margin.bottom;
+  var margin = {top: 20, right: 20, bottom: 45, left: 40},
+  width = svgWidth - margin.left - margin.right,
+  height = svgHeight - margin.top - margin.bottom;
 
   var finalList = [];
 
@@ -724,7 +813,12 @@ function setCountyChart(countyName, yearList){
   // add the x Axis
   svg.append("g")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
+  .call(d3.axisBottom(x))
+  .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
   // add the y Axis
   svg.append("g")
@@ -738,7 +832,7 @@ function setCountyChart(countyName, yearList){
     .attr("text-anchor", "end")
     .attr("x", width/2)
     .attr("y", height + margin.bottom)
-    .text("Decade");
+    .text("Decade")
 
   // Add y axis label
   svg.append("text")
@@ -752,6 +846,8 @@ function setCountyChart(countyName, yearList){
 
 //function to create coordinated bar chart
 function setStateChart(paths){
+  console.log("called state chart")
+  $("#state-graph").html("Wisconsin Tornado Count 1950-2018")
 
   var decade1 = 0;
   var decade2 = 0;
@@ -794,10 +890,13 @@ function setStateChart(paths){
 
   var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
 
+  var svgWidth = $("#state-graph").width(),
+      svgHeight = $("#state-graph").height()* 0.8;
+
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 20, bottom: 40, left: 45},
-  width = 280 - margin.left - margin.right,
-  height = 250 - margin.top - margin.bottom;
+  var margin = {top: 20, right: 20, bottom: 45, left: 45},
+  width = svgWidth - margin.left - margin.right,
+  height = svgHeight - margin.top - margin.bottom;
 
   var maxCount = d3.max(decadeList, function(d) { return d.count; })
 
@@ -834,7 +933,12 @@ function setStateChart(paths){
   // add the x Axis
   svg.append("g")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
+  .call(d3.axisBottom(x))
+  .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
   // add the y Axis
   svg.append("g")
@@ -859,3 +963,7 @@ function setStateChart(paths){
     .attr("transform", "rotate(-90)")
     .text("Number of Tornadoes");
 };
+
+$("#back").click(function(){
+  $("#mobile-content").css('display', 'none');
+});

@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Tornado Tool</title>
+    <title>Visualizing Wisconsin Tornadoes</title>
 
     <!-- Stylesheets -->
 
@@ -31,14 +31,8 @@
     <nav id="navbar" class="navbar navbar-expand-md navbar-dark bg-orange fixed-top">
       <div class="container">
           <a class="navbar-brand">Visualizing Patterns in Wisconsin Tornado History</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav ml-auto">
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="#" data-toggle="modal" data-target="#mobileModal">Data Filters</a>
-                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                 </li>
@@ -67,25 +61,9 @@
       </div>
   </div>
 
-  <!-- Filters Modal
-  <div class="modal fade" id="mobileModal" tabindex="-1" role="dialog" aria-labelledby="mobileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title mobile-title" id="mobileModalLabel">Data Filters</h5>
-            </div>
-            <div class="modal-body mobile-body">
-              
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Back to Map</button>
-            </div>
-        </div>
-    </div>
-</div> -->
-
   <!-- Map -->
   <div id="map"></div>
+  <div id="mobile-div"></div>
   <div id="date-label"></div>
 
   <div class="container-fluid">
@@ -114,7 +92,9 @@
             </button>
           </div>
         </div>
-        <h4>Use the control buttons or slider to play through the animation:</h4>
+        <div id=control-text>
+          <h4>Use the control buttons or slider to play through the animation:</h4>
+        </div>
         <div id="control-buttons">
           <div class="btn-group">
             <!-- <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
@@ -128,17 +108,26 @@
             </button>
           </div>
         </div>
-        <div class="slidecontainer">
+        <div class="slidecontainer" id="slidecontainer">
           <input type="range" min="-1" max="6" value="-1" class="slider" id="myRange">
         </div>
         <div id="mode">
           <a id="count" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" href="index.html">
-            Enter Exploration Mode
+            Return to Exploration Mode
           </a>
         </div>
       </div>
     </div>
   
+  </div>
+
+  <div class="container-fluid" id="mobile-content">
+    <div id="buttons-mobile">
+      <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+        Back to map
+      </button>
+    </div>
+
   </div>
 
     <!-- Scripts -->
@@ -163,19 +152,7 @@
     integrity="sha512-cMQ5e58BDuu1pr9BQ/eGRn6HaR6Olh0ofcHFWe5XesdCITVuSBiBZZbhCijBe5ya238f/zMMRYIMIIg1jxv4sQ=="
                 crossorigin=""></script>
 
-    <!-- Include Leaflet-D3 -->
-    <script src="https://cdn.jsdelivr.net/npm/@asymmetrik/leaflet-d3@4.4.0/dist/leaflet-d3.min.js" charset="utf-8"></script>
-
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>     -->
-    <!-- JS Files -->
-
-    <!-- Leaflet slider -->
-    <script src="lib/leaflet-timeline-slider.min.js"></script>
-
     <script src="main.js"></script>
-    <!-- <script src="viz.js"></script> -->
-    <!-- <script src="explore.js"></script> -->
 
   </body>
 </html>

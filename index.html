@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Tornado Tool</title>
+    <title>Visualizing Wisconsin Tornadoes</title>
 
     <!-- Stylesheets -->
 
@@ -17,10 +17,13 @@
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-    crossorigin=""/>
+    crossorigin="">
     <link rel="stylesheet" href="lib/leaflet.zoomhome.css">
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" /> -->
+
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"> 
 
     <link rel="stylesheet" href="style.css"/>
   </head>
@@ -48,7 +51,7 @@
                     <!-- <select id="severityDrop">
                             <option selected value="">Filter by severity</option>
                     </select> -->
-                    <button id="clear" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">Clear <br> Filters</button>
+                    <button id="clear" type="button" class="btn btn-secondary" data-toggle="button" aria-pressed="false" autocomplete="off">Clear <br> Filters</button>
                   </div>
                 </li>
                 <li class="nav-item">
@@ -84,7 +87,7 @@
 
   <div class="container-fluid">
     <div id="sidebar">
-      <div id="info-text">This map displays tornado occurrences in Wisconsin between 1950 and 2018.</div>
+      <div id="info-text">This map displays tornado occurrences in Wisconsin between 1950 and 2018.  Use the filters to compare tornado frequency and severity at the county level.</div>
       <div id="toggles">
         <label class="container">Tornado Paths
           <input type="checkbox" checked="checked" id="tornado_paths_check" class="tornado_paths_check">
@@ -131,9 +134,24 @@
     </div>
   </div>
 
-  <div class="container-fluid">
-    <div id="mobile-page">
-
+  <div class="container-fluid" id="mobile-content">
+    <div id="dropdowns-mobile">
+      <select id="countyMobileDrop">
+              <option selected value="">Filter by county</option>
+      </select>
+      <select id="decadeMobileDrop">
+              <option selected value="">Filter by decade</option>
+      </select>
+      <select id="monthMobileDrop">
+              <option selected value="">Filter by month</option>
+      </select>
+      <!-- <select id="severityDrop">
+              <option selected value="">Filter by severity</option>
+      </select> -->
+      <button id="clear-mobile" type="button" class="btn btn-secondary" data-toggle="button" aria-pressed="false" autocomplete="off">Clear <br> Filters</button>
+      <button id="back" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+        Back to map
+      </button>
     </div>
   </div>
 
