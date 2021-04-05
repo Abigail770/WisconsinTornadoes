@@ -22,6 +22,7 @@ var filterInfo = "";
 var mobileContent = "";
 var map;
 var mediaQuery = window.matchMedia( "(max-width: 1068px)" );
+var numMobile = 0;
 
 var monthFilter = false;
 var decadeFilter = false;
@@ -148,7 +149,7 @@ function setMap(){
             invisPaths.setStyle({opacity: 0, weight: 10});
             highlightPath(layer);
           });
-          layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
+          layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'<br> Date : '+feature.properties.date+'<br> Fatalities: '+feature.properties.fat+'<br> Injuries: '+feature.properties.inj+'</p>');
         },
         style: {opacity: 0, weight: 10}
       });
@@ -181,11 +182,14 @@ function setMap(){
       })
 
       function getMobileContent(){
+        numMobile ++;
         $("#mobile-content").css('display', 'block');
         $('#mobile-content').css('top', $('#navbar').outerHeight());
-        populateCountyDropdown(true);
-        populateDecadeDropdown(true);
-        populateMonthDropdown(true);
+        if (numMobile == 1){
+          populateCountyDropdown(true);
+          populateDecadeDropdown(true);
+          populateMonthDropdown(true);
+        }
         $('#mobile-content').append($('#sidebar'));
         $('#sidebar').css('display', 'block');
         // $('#sidebar').css('top', $('#navbar').outerHeight() + $('#dropdowns-mobile').height());
@@ -211,6 +215,12 @@ function setMap(){
       });
 
       function clearFilters(){
+        $('#name').html("");
+        $('#num_tornadoes').html("");
+        $('#fat').html("");
+        $('#inj').html("");
+        $('#county-info-text').css('display', 'block');
+
         $("#dropdowns > select").each(function() { 
           this.selectedIndex = 0
         });
@@ -315,6 +325,11 @@ function setMap(){
       //   });
       // }
 
+      var fatalityList = [];
+      var injList = [];
+      var fatalityCount = 0;
+      var injCount = 0;
+
       var decadeLines = [];
       var monthLines = [];
       var countyLines = [];
@@ -326,6 +341,9 @@ function setMap(){
       var monthInput;
 
       function countyDrop(e){
+        $("#county-info-text").css("display", "none");
+        fatalityCount = 0;
+        injcount = 0;
         countyFilter = true;
         countyLines=[];
         countyInput = e.currentTarget.selectedOptions[0].attributes[0].value;
@@ -335,6 +353,11 @@ function setMap(){
 
         $('#name').html("");
         $('#name').append(countyInput);
+
+        if (map.hasLayer(countyLayer)){
+          countyLayer.setStyle(countyStyle);
+          countyLayer.bringToBack();
+        }
 
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
@@ -358,20 +381,14 @@ function setMap(){
 
         turf.featureEach(counties, function (currentFeatures, featureIndex) {
           if (currentFeatures.properties.COUNTY_NAM == countyInput){
-            $('#num_tornadoes').html("");
-            $('#num_tornadoes').append(currentFeatures.properties.Join_Count);
-
-            $('#fat').html("");
-            $('#fat').append(currentFeatures.properties.fat);
-
-            $('#inj').html("");
-            $('#inj').append(currentFeatures.properties.inj);
             if (monthFilter == true && decadeFilter == true){
               for (var i = 0; i < pathsWithCo.features.length; i++){
                 var line = pathsWithCo.features[i].geometry;
                 if (pathsWithCo.features[i].properties.mo == monthInput && pathsWithCo.features[i].properties.decade == decadeInput){
                   if (turf.booleanIntersects(line, currentFeatures.geometry)){
                     countyLines.push(pathsWithCo.features[i]);
+                    fatalityCount += pathsWithCo.features[i].properties.fat;
+                    injCount += pathsWithCo.features[i].properties.inj;
                   }
                 }
               }
@@ -382,6 +399,8 @@ function setMap(){
                 if (pathsWithCo.features[i].properties.mo == monthInput){
                   if (turf.booleanIntersects(line, currentFeatures.geometry)){
                     countyLines.push(pathsWithCo.features[i]);
+                    fatalityCount += pathsWithCo.features[i].properties.fat;
+                    injCount += pathsWithCo.features[i].properties.inj;
                   }
                 }
               }
@@ -392,11 +411,18 @@ function setMap(){
                   if (pathsWithCo.features[i].properties.decade == decadeInput){
                     if (turf.booleanIntersects(line, currentFeatures.geometry)){
                       countyLines.push(pathsWithCo.features[i]);
+                      fatalityCount += pathsWithCo.features[i].properties.fat;
+                      injCount += pathsWithCo.features[i].properties.inj;
                     }
                   }
                 }
             }
             else{
+              $('#fat').html("");
+              $('#fat').append(currentFeatures.properties.fat);
+
+              $('#inj').html("");
+              $('#inj').append(currentFeatures.properties.inj);
               for (var i = 0; i < paths.features.length; i++){
                 var line = paths.features[i].geometry;
           
@@ -425,6 +451,15 @@ function setMap(){
         };
         filterInfo.addTo(map);
 
+        $('#num_tornadoes').html("");
+        $('#num_tornadoes').append(countyLines.length);
+
+        $('#fat').html("");
+        $('#fat').append(fatalityCount);
+
+        $('#inj').html("");
+        $('#inj').append(injCount);
+
         // Create layer for county paths
         newpaths = L.geoJson(countyLines, {
           style: getStyle
@@ -437,7 +472,7 @@ function setMap(){
               newinvispaths.setStyle({opacity: 0, weight: 10});
               highlightPath(layer);
             });
-            layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
+            layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'<br> Date : '+feature.properties.date+'<br> Fatalities: '+feature.properties.fat+'<br> Injuries: '+feature.properties.inj+'</p>');
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
@@ -455,9 +490,26 @@ function setMap(){
       var invisDecadePaths;
 
       function decadeDrop(e){
+        $("#county-info-text").css("display", "none");
+        fatalityCount = 0;
+        injCount = 0;
         decadeFilter = true;
         decadeLines = [];
         decadeInput = e.currentTarget.selectedOptions[0].attributes[0].value;
+
+        if (countyFilter == true){
+          $('#name').html("");
+          $('#name').append(countyInput);
+        }else{
+          $('#name').html("");
+          $('#name').append("No county selected");
+        }
+
+        if (map.hasLayer(countyLayer)){
+          countyLayer.setStyle(countyStyle);
+          countyLayer.bringToBack();
+        }
+
         if (map.hasLayer(monthPaths)){
           map.removeLayer(monthPaths)
           map.removeLayer(invismonthPaths)
@@ -481,22 +533,30 @@ function setMap(){
         turf.featureEach(pathsWithCo, function (currentFeatures, featureIndex) {
           if (monthFilter == true && countyFilter == true){
               if (currentFeatures.properties.mo == monthInput && currentFeatures.properties.decade == decadeInput && currentFeatures.properties.COUNTY_NAM == countyInput){
-                decadeLines.push(currentFeatures)
+                decadeLines.push(currentFeatures);
+                fatalityCount += currentFeatures.properties.fat;
+                injCount += currentFeatures.properties.inj;
               }
           }
           else if (monthFilter == true && countyFilter == false){
             if (currentFeatures.properties.decade == decadeInput && currentFeatures.properties.mo == monthInput){
-              decadeLines.push(currentFeatures)
+              decadeLines.push(currentFeatures);
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
             }
           }
           else if (countyFilter == true && monthFilter == false){
             if (currentFeatures.properties.decade == decadeInput && currentFeatures.properties.COUNTY_NAM == countyInput){
-              decadeLines.push(currentFeatures)
+              decadeLines.push(currentFeatures);
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
             }
           }
           else{
             if (currentFeatures.properties.decade == decadeInput){
-              decadeLines.push(currentFeatures)
+              decadeLines.push(currentFeatures);
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
             }
           }
         });
@@ -517,6 +577,22 @@ function setMap(){
         };
         filterInfo.addTo(map);
 
+        $('#num_tornadoes').html("");
+        $('#num_tornadoes').append(decadeLines.length);
+
+        // fatalityList.forEach(function(line){
+        //   fatalityCount += line;
+        // });
+        // injList.forEach(function(line){
+        //   injCount += line;
+        // });
+
+        $('#fat').html("");
+        $('#fat').append(fatalityCount);
+
+        $('#inj').html("");
+        $('#inj').append(injCount);
+
         // Create layer for decade paths
         decadePaths = L.geoJson(decadeLines, {
           style: getStyle
@@ -529,7 +605,7 @@ function setMap(){
               invisDecadePaths.setStyle({opacity: 0, weight: 10});
               highlightPath(layer);
             });
-            layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
+            layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'<br> Date : '+feature.properties.date+'<br> Fatalities: '+feature.properties.fat+'<br> Injuries: '+feature.properties.inj+'</p>');
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
@@ -547,9 +623,25 @@ function setMap(){
       var invismonthPaths;
 
       function monthDrop(e){
+        $("#county-info-text").css("display", "none");
+        fatalityCount = 0;
+        injCount = 0;
         monthFilter = true;
         monthLines = [];
         monthInput = e.currentTarget.selectedOptions[0].attributes[0].value;
+
+        if (countyFilter == true){
+          $('#name').html("");
+          $('#name').append(countyInput);
+        }else{
+          $('#name').html("");
+          $('#name').append("No county selected");
+        }
+
+        if (map.hasLayer(countyLayer)){
+          countyLayer.setStyle(countyStyle);
+          countyLayer.bringToBack();
+        }
 
         if (map.hasLayer(newpaths)){
           map.removeLayer(newpaths)
@@ -601,21 +693,29 @@ function setMap(){
           if (decadeFilter == true && countyFilter == true){
             if (feature == monthInput && currentFeatures.properties.decade == decadeInput && currentFeatures.properties.COUNTY_NAM == countyInput){
               monthLines.push(currentFeatures)
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
             }
           }
           else if (decadeFilter == true && countyFilter == false){
             if (feature == monthInput && currentFeatures.properties.decade == decadeInput){
-              monthLines.push(currentFeatures)
+              monthLines.push(currentFeatures);
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
             }
           }
           else if (countyFilter == true && decadeFilter == false){
             if (feature == monthInput && currentFeatures.properties.COUNTY_NAM == countyInput){
-              monthLines.push(currentFeatures)
+              monthLines.push(currentFeatures);
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
             }
           }
           else{
             if (feature == monthInput){
-              monthLines.push(currentFeatures)
+              monthLines.push(currentFeatures);
+              fatalityCount += currentFeatures.properties.fat;
+              injCount += currentFeatures.properties.inj;
           }
           }
         });
@@ -642,6 +742,15 @@ function setMap(){
           style: getStyle
         }).addTo(map);
 
+        $('#num_tornadoes').html("");
+        $('#num_tornadoes').append(monthLines.length);
+
+        $('#fat').html("");
+        $('#fat').append(fatalityCount);
+
+        $('#inj').html("");
+        $('#inj').append(injCount);
+
         // Invisible buffer layer
         invismonthPaths = L.geoJson(monthLines, {
           onEachFeature: function (feature, layer) {
@@ -649,7 +758,7 @@ function setMap(){
               invismonthPaths.setStyle({opacity: 0, weight: 10});
               highlightPath(layer);
             });
-            layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'</p><p> Date : '+feature.properties.date+'</p>');
+            layer.bindPopup('<p> Magnitude: '+feature.properties.mag+'<br> Date : '+feature.properties.date+'<br> Fatalities: '+feature.properties.fat+'<br> Injuries: '+feature.properties.inj+'</p>');
           },
           style: {opacity: 0, weight: 10}
         }).addTo(map);
@@ -846,7 +955,6 @@ function setCountyChart(countyName, yearList){
 
 //function to create coordinated bar chart
 function setStateChart(paths){
-  console.log("called state chart")
   $("#state-graph").html("Wisconsin Tornado Count 1950-2018")
 
   var decade1 = 0;
