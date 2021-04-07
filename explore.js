@@ -192,7 +192,7 @@ function setMap(){
         }
         $('#mobile-content').append($('#sidebar'));
         $('#sidebar').css('display', 'block');
-        // $('#sidebar').css('top', $('#navbar').outerHeight() + $('#dropdowns-mobile').height());
+        $('#sidebar').css('top', $('#dropdowns-mobile').outerHeight());
       }
 
       loadPaths();
@@ -999,7 +999,7 @@ function setStateChart(paths){
   var decades = ["1950", "1960", "1970", "1980", "1990", "2000", "2010"]
 
   var svgWidth = $("#state-graph").width(),
-      svgHeight = $("#state-graph").height()* 0.8;
+      svgHeight = $("#state-graph").height()* 0.7;
 
   // set the dimensions and margins of the graph
   var margin = {top: 20, right: 20, bottom: 45, left: 45},

@@ -66,11 +66,11 @@ function setMap(){
             zoomControl: false,
             scrollWheelZoom: false,
             zoom: 7,
-            center: [44.7, -88.5],
+            center: [44.7, -87.5],
             maxZoom: 18,
             dragging: false,
         });
-        $('#map').css('left', "25%");
+        $('#map').css('left', "30%");
         $('#sidebar-viz').css('top', $('#navbar').outerHeight());
         $('#date-label').css('top', $('#navbar').outerHeight());
         $('#date-label').css('left', $('#sidebar-viz').width() + 20 + ($('#map').width() * 0.3));
@@ -197,7 +197,7 @@ function setMap(){
                 /////////////// BEGIN ANIMATION////////////////
                 // Add initial (blank) hexbin map
                 var initMap = L.geoJson(layers[i], {style: {
-                    fillColor: '#484848',
+                    fillColor: '#FFEDA0',
                     weight: 2,
                     opacity: 1,
                     color: 'white',

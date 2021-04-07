@@ -30,7 +30,10 @@
     <!-- Navbar -->
     <nav id="navbar" class="navbar navbar-expand-md navbar-dark bg-orange fixed-top">
       <div class="container">
-          <a class="navbar-brand">Visualizing Patterns in Wisconsin Tornado History</a>
+          <a class="navbar-brand">Visualizing Wisconsin Tornadoes</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -49,10 +52,11 @@
                   <h5 class="modal-title about-title" id="aboutModalLabel">About the Map</h5>
               </div>
               <div class="modal-body about-body">
-                  <p>This map was created by Abigail Gleason for her independent practicum project class at UW-Madison in the GIS and Web Map Programming Master's degree program.</p>
+                <p>This map was created by Abigail Gleason for an independent practicum project in the GIS and Web Map Programming Master's degree program at UW-Madison. This application was created using the Leaflet, Turf.js, and D3 JavaScript libraries.</p>
                   <hr>
                   <h5>Data Sources</h5>
                   <p>Tornado data: <a href='https://www.spc.noaa.gov/gis/svrgis/' target="_blank">NOAA GIS</a></p>
+                  <p>County boundaries: <a href='https://data-wi-dnr.opendata.arcgis.com/datasets/8b8a0896378449538cf1138a969afbc6_3' target="_blank">WI DNR</a></p>
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -68,7 +72,7 @@
 
   <div class="container-fluid">
     <div id="sidebar-viz">
-      <div id="info-text">Tornadoes are among the least understood storm events in terms of climate change impacts.  Over the past few decades, there has been no identifiable increase in the number of high magnitude tornadoes in the US.  However, tornado events are increasingly clustered and the number of days with tornado events is increasing.  This could be an effect of climate change. </br></br> <strong>Click "play" or select a type and variable to start the animation.</strong></div>
+      <div id="info-text">Tornadoes are among the least understood storm events in terms of climate change impacts. Over the past few decades, there has been no identifiable increase in the number of high magnitude tornadoes in the US. However, tornado events are increasingly clustered and the number of days with tornado events is increasing. This could be an effect of climate change. The animation displayed here is intended to help identify climatic as well as seasonal trends. As you play the animation, notice the greater clustering of tornado counts in recent decades, and the seeming decrease in high severity tornadoes.</br></br> <strong>Click the play button or select a type and variable to start the animation.</strong></div>
       <div id="all-buttons">
         <div id="type-buttons">
           <h4>Select an animation type: </h4>
