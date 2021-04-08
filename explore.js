@@ -774,6 +774,7 @@ function setMap(){
 
       function loadPaths(){
         if ($('#tornado_paths_check').prop('checked')){
+          clearFilters();
           tornadoPaths.addTo(map);
           addLegend();
 
@@ -788,6 +789,20 @@ function setMap(){
             map.removeLayer(tornadoPaths);
             map.removeLayer(invisPaths);
           }
+          else if (map.hasLayer(newpaths)){
+            console.log("has layer")
+            map.removeLayer(newpaths)
+            map.removeLayer(newinvispaths)
+          }
+          else if (map.hasLayer(monthPaths)){
+            map.removeLayer(monthPaths)
+            map.removeLayer(invismonthPaths)
+          }
+          else if (map.hasLayer(decadePaths)){
+            map.removeLayer(decadePaths)
+            map.removeLayer(invisDecadePaths)
+          }
+  
         }
       }
 
