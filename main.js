@@ -244,6 +244,7 @@ function setMap(){
                     stop=true;
                     stopClicked=true;
                     selection="decade";
+                    slider.value = 0;
                     document.getElementById("myRange").min = "0";
                     document.getElementById("myRange").max = "6";
                     if (variable == "severity"){
@@ -264,6 +265,7 @@ function setMap(){
                     stop=true;
                     stopClicked=true;
                     selection="month";
+                    slider.value = 0;
                     document.getElementById("myRange").min = "0";
                     document.getElementById("myRange").max = "11";
                     if (variable == "severity"){
@@ -296,6 +298,7 @@ function setMap(){
                     else if (selection == "month"){
                         $("#date-label").html("Tornado Severity by Month: January");
                     }
+                    slider.value = 0;
                     setInitialMap();
                     initMap.addTo(map);
                     // stop == true;
@@ -319,6 +322,7 @@ function setMap(){
                     else if (selection == "month"){
                         $("#date-label").html("Number of Tornadoes by Month: January");
                     }
+                    slider.value = 0;
                     setInitialMap();
                     initMap.addTo(map);
                     // stop == true;
@@ -476,7 +480,7 @@ function setMap(){
                         else{
                             j=1;
                             i=1;
-                            slider.value = -1;
+                            slider.value = 0;
                             stop = true;
                             // if (legend != ""){
                             //     legend.remove();
@@ -551,7 +555,7 @@ function setMap(){
                             j=0;
                             i=0;
                             stop = true;
-                            slider.value = -1;
+                            slider.value = 0;
                             // if (legend != ""){
                             //     legend.remove();
                             // }
@@ -602,7 +606,7 @@ function setMap(){
                             j=0;
                             i=0;
                             stop = true;
-                            slider.value = -1;
+                            slider.value = 0;
                             // if (legend != ""){
                             //     legend.remove();
                             // }
@@ -670,7 +674,7 @@ function setMap(){
                             j=0;
                             i=0;
                             stop = true;
-                            slider.value = -1;
+                            slider.value = 0;
                             // if (legend != ""){
                             //     legend.remove();
                             // }

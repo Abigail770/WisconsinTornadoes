@@ -238,9 +238,30 @@ function setMap(){
         monthFilter = false;
         countyFilter = false;
 
-        map.eachLayer(function (layer) {
-          map.removeLayer(layer);
-        });
+        // map.eachLayer(function (layer) {
+        //   map.removeLayer(layer);
+        // });
+
+        if (map.hasLayer(invisPaths)){
+          map.removeLayer(tornadoPaths);
+          map.removeLayer(invisPaths);
+        }
+        else if (map.hasLayer(newpaths)){
+          map.removeLayer(newpaths)
+          map.removeLayer(newinvispaths)
+        }
+        else if (map.hasLayer(monthPaths)){
+          map.removeLayer(monthPaths)
+          map.removeLayer(invismonthPaths)
+        }
+        else if (map.hasLayer(decadePaths)){
+          map.removeLayer(decadePaths)
+          map.removeLayer(invisDecadePaths)
+        }
+        if (map.hasLayer(countyLayer)){
+          countyLayer.setStyle(countyStyle);
+          countyLayer.bringToBack();
+        }
 
         basemap.addTo(map);
 
@@ -252,10 +273,10 @@ function setMap(){
           invisPaths.addTo(map);
         }
 
-        if ($('#county_bounds_check').prop('checked')){
-          countyLayer.addTo(map);
-          countyLayer.bringToBack();
-        }
+        // if ($('#county_bounds_check').prop('checked')){
+        //   countyLayer.addTo(map);
+        //   countyLayer.bringToBack();
+        // }
       }
       $("#clear-mobile").click(clearFilters)
       $('#clear').click(clearFilters)
@@ -790,7 +811,6 @@ function setMap(){
             map.removeLayer(invisPaths);
           }
           else if (map.hasLayer(newpaths)){
-            console.log("has layer")
             map.removeLayer(newpaths)
             map.removeLayer(newinvispaths)
           }
