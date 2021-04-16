@@ -1,6 +1,6 @@
 // Global variables
 var promises = [];
-var files = ["join_1950.json", "join_1960.json", "join_1970.json", "join_1980.json", "join_1990.json", "join_2000.json", "join_2010.json", "january.json", "february.json", "march.json", "april.json", "may.json", "june.json", "july.json", "august.json", "september.json", "october.json", "november.json", "december.json"];
+var files = ["data/join_1950.json", "data/join_1960.json", "data/join_1970.json", "data/join_1980.json", "data/join_1990.json", "data/join_2000.json", "data/join_2010.json", "data/january.json", "data/february.json", "data/march.json", "data/april.json", "data/may.json", "data/june.json", "data/july.json", "data/august.json", "data/september.json", "data/october.json", "data/november.json", "data/december.json"];
 var map;
 var initMap;
 

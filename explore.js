@@ -16,7 +16,7 @@ function getStyle(feature) {
 }
 
 var promises = [];
-var files = ["wi_tornadoes.json", "tornadoes_by_county.geojson", "join_1950.json", "join_1960.json", "join_1970.json", "join_1980.json", "join_1990.json", "join_2000.json", "join_2010.json", "wi_tornadoes_co.geojson"];
+var files = ["data/wi_tornadoes.json", "data/tornadoes_by_county.geojson", "data/join_1950.json", "data/join_1960.json", "data/join_1970.json", "data/join_1980.json", "data/join_1990.json", "data/join_2000.json", "data/join_2010.json", "data/wi_tornadoes_co.geojson"];
 var legend = "";
 var filterInfo = "";
 var mobileContent = "";
